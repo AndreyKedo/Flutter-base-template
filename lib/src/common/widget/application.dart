@@ -1,10 +1,12 @@
 import 'package:flutter/widgets.dart';
+import 'package:starter_template/src/common/extensions/build_context.dart';
 import 'package:starter_template/src/common/model/dependency_storage.dart';
 
 import 'dependency_scope.dart';
 
 typedef DependencyFactory<DependencyStorage extends IDependenciesStorage> = DependencyStorage Function();
 
+@immutable
 abstract class AppWrapper<DependencyStorage extends IDependenciesStorage> extends StatelessWidget {
   const AppWrapper({
     super.key,
@@ -13,13 +15,16 @@ abstract class AppWrapper<DependencyStorage extends IDependenciesStorage> extend
 
   final DependencyFactory<DependencyStorage> dependencyFactory;
 
-  @override
-  StatelessElement createElement() => _AppWrapperElement(this, dependencyFactory);
-}
+  @protected
+  Widget buildApp(DependencyStorage storage);
 
-class _AppWrapperElement<DependencyStorage extends IDependenciesStorage> extends StatelessElement {
-  _AppWrapperElement(super.widget, this.dependencyFactory);
-  final DependencyFactory<DependencyStorage> dependencyFactory;
   @override
-  Widget build() => DependenciesScope(create: (_) => dependencyFactory(), child: super.build());
+  Widget build(BuildContext context) {
+    return DependenciesScope(
+      create: (_) => dependencyFactory(),
+      child: Builder(
+        builder: (context) => buildApp(context.dependency<DependencyStorage>()),
+      ),
+    );
+  }
 }

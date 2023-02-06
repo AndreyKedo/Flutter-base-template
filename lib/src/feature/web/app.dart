@@ -15,7 +15,7 @@ class Application extends AppWrapper<WebDependencyStorage> {
   final GoAppNavigator navigator = GoAppNavigator.create(navKey: GlobalKey());
 
   @override
-  Widget build(BuildContext context) {
+  Widget buildApp(WebDependencyStorage storage) {
     return MaterialApp.router(
       theme: ThemeData.light(useMaterial3: true),
       darkTheme: ThemeData.dark(useMaterial3: true),
