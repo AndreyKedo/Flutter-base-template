@@ -1,0 +1,63 @@
+name: starter_template
+description: Flutter template project
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=2.18.2 <3.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  #State managment
+  bloc: ^8.1.0
+  flutter_bloc: ^8.1.1
+  #Routing
+  go_router: ^6.0.3
+  #Localizations
+  intl: ^0.17.0
+  
+  #Utils
+  url_launcher: ^6.1.6
+  image_picker: ^0.8.6
+  provider: ^6.0.4
+  logging: ^1.1.0
+  path: ^1.8.2
+  path_provider: ^2.0.11
+  collection: ^1.17.0
+
+  #Database
+  drift: ^2.2.0
+  sqlite3_flutter_libs: ^0.5.12
+  shared_preferences: ^2.0.15
+
+  #Entity
+  freezed_annotation: ^2.2.0
+  json_annotation: ^4.7.0
+
+  #UI
+  cupertino_icons: ^1.0.5
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^2.0.0
+  build_runner: ^2.3.2
+  drift_dev: ^2.2.0+1
+  freezed: ^2.2.1
+  json_serializable: ^6.5.4
+  flutter_gen_runner: ^5.1.0+1
+
+flutter:
+  uses-material-design: true
+  generate: true
+
+  assets:
+    - assets/
+
+flutter_gen:
+  output: lib/src/common/constant

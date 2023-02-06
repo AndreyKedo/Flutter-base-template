@@ -1,0 +1,8 @@
+{
+    "@@locale": "ru",
+    "language": "Русский",
+    "appTitle": "Стартовый шаблон",
+    "@appTitle": {
+      "description": "Шаблон проекта Fluter"
+    }
+  }
