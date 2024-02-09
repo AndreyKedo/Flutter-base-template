@@ -1,5 +1,15 @@
 import 'package:flutter/foundation.dart' show kDebugMode;
 
-const String kFlavor = String.fromEnvironment('FLAVOR', defaultValue: kDebugMode ? 'develop' : 'production');
+typedef Flavor = String;
 
-const kDebug = kDebugMode;
+sealed class EnvironmentConfig {
+  static const Flavor kFlavor = String.fromEnvironment('FLAVOR');
+
+  static const kDebug = kDebugMode;
+}
+
+extension FlavorX on Flavor {
+  bool get production => this == 'PROD';
+  bool get beta => this == 'BETA';
+  bool get develop => this == 'DEV';
+}

@@ -1,18 +1,48 @@
-import 'package:flutter/widgets.dart' show BuildContext, Locale, Localizations;
-import 'package:starter_template/src/common/localization/localization.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 
-import 'package:starter_template/src/common/model/dependency_storage.dart';
-import 'package:starter_template/src/common/widget/dependency_scope.dart';
+enum DeviceType {
+  tablet,
+  mobile,
+  desktop;
+}
 
 extension BuildContextX on BuildContext {
-  AppLocalizations get localized {
-    final delegate = AppLocalizations.of(this);
-    assert(delegate != null, 'Do not have AppLocalizations into elements tree');
-    return delegate!;
+  Size get screenSize => MediaQuery.sizeOf(this);
+  Orientation get orientation => MediaQuery.orientationOf(this);
+
+  bool get isMobile => _deviceType == DeviceType.mobile;
+
+  bool get isTablet => _deviceType == DeviceType.tablet;
+
+  /// Getting value by current [DeviceType]
+  /// or [orElse] value
+  T valueByDeviceType<T extends Object?>({
+    required ValueGetter<T> orElse,
+    ValueGetter<T>? table,
+    ValueGetter<T>? mobile,
+    ValueGetter<T>? desktop,
+  }) {
+    final callback = switch (_deviceType) {
+          DeviceType.mobile => mobile,
+          DeviceType.tablet => table,
+          DeviceType.desktop => desktop
+        } ??
+        orElse;
+    return callback.call();
   }
 
-  Locale get locale => Localizations.localeOf(this);
+  DeviceType get _deviceType {
+    final size = screenSize;
 
-  Storage dependency<Storage extends IDependenciesStorage>() => DependenciesScope.of<Storage>(this);
-  Storage dependencyWatch<Storage extends IDependenciesStorage>() => DependenciesScope.of<Storage>(this, listen: true);
+    final result = _mathDeviceBySize(
+        kIsWeb ? size.width : switch (size.aspectRatio) { <= 0.0 => size.width, _ => size.shortestSide });
+    return result;
+  }
+
+  DeviceType _mathDeviceBySize(final double width) => switch (width) {
+        <= 600.0 => DeviceType.mobile,
+        >= 600.0 && < 1024.0 => DeviceType.tablet,
+        _ => DeviceType.desktop
+      };
 }

@@ -1,71 +1,65 @@
+/*
+* runner.dart
+* Base application runner implementation. 
+* Contains capturing of initialization metrics  and  exception handler.
+* Dashkevich Andrey <dashkevich@ittest-team.ru>, 17 January 2024
+*/
+
 import 'dart:async';
-import 'package:flutter/foundation.dart' show FlutterError, FlutterErrorDetails;
-import 'package:flutter/widgets.dart' show Widget, WidgetsBinding, WidgetsFlutterBinding;
+import 'package:flutter/foundation.dart' show Factory;
+import 'package:flutter/widgets.dart' show WidgetsFlutterBinding;
 import 'package:logging/logging.dart';
 import 'package:starter_template/src/common/model/dependency_storage.dart';
 
 import 'dart:developer';
 
 import 'logger_printer.dart';
-import 'model/runner_config.dart';
+export 'package:flutter/foundation.dart' show Factory;
 
-export 'model/runner_config.dart';
+abstract class IRunner<DS extends IDependenciesStorage> {
+  Factory<DS>? _$initializeDependency;
 
-typedef ShowWidget = void Function(Widget splash);
-typedef DependencyFactory<Storage extends IDependenciesStorage> = Storage Function();
+  FutureOr<Factory<DS>> initialization();
 
-mixin IRunner {
-  FutureOr<DependencyFactory?> initialization(RunnerConfig config) {
-    return null;
-  }
-
-  void onAppRun(DependencyFactory? factoryDependency);
-  void onLoading(ShowWidget show) {}
-  void onError(Object error, StackTrace stackTrace, ShowWidget show) {}
+  void onAppRun(Factory<DS> factoryDependency);
+  void onLoading() {}
+  void onError(Object error, StackTrace stackTrace) {}
 
   abstract final Logger log;
 
-  void run([RunnerConfig config = const RunnerConfig()]) {
+  void run() async {
     hierarchicalLoggingEnabled = true;
     log.level = Level.OFF;
     assert(() {
       log.level = Level.ALL;
-      log.onRecord.map((event) => CustomPrint(event)).listen(CustomPrint.write);
-
-      FlutterError.onError = (FlutterErrorDetails error) {
-        log.severe('Flutter error', error.toStringShort(), error.stack);
-      };
+      log.onRecord.map(LogRecordPrinter.map).listen(LogRecordPrinter.write);
       return true;
     }());
-    final WidgetsBinding binding = WidgetsFlutterBinding.ensureInitialized();
-    void showWidget(Widget splash) {
-      binding
-        ..attachRootWidget(splash)
-        ..scheduleForcedFrame();
-    }
+    final binding = WidgetsFlutterBinding.ensureInitialized()..deferFirstFrame();
+    onLoading();
+    final stopwatch = Stopwatch()..start();
+    final flow = Flow.begin();
+    try {
+      _$initializeDependency ??= await Timeline.timeSync<FutureOr<Factory<DS>>>(
+          'Initialization dependency', initialization,
+          flow: Flow.step(flow.id));
 
-    onLoading(showWidget);
-    runZonedGuarded(() async {
-      final stopwatch = Stopwatch()..start();
-      final flow = Flow.begin();
-      Timeline.startSync('Initialization', flow: flow);
-      try {
-        final dependency = await initialization(config);
-        onAppRun(dependency);
-        Timeline.finishSync();
-        Flow.end(flow.id);
-      } on Object catch (error, stackTrace) {
-        assert(() {
-          log.severe('Dependency init fail', error, stackTrace);
-          return true;
-        }());
-        rethrow;
-      } finally {
-        log.info('time to start ${stopwatch.elapsedMilliseconds} ms');
-        stopwatch.stop();
-      }
-    }, (error, stack) {
-      onError(error, stack, showWidget);
-    });
+      Timeline.timeSync('UI loading', () {
+        onAppRun(_$initializeDependency!);
+      }, flow: Flow.end(flow.id));
+    } on Object catch (error, stackTrace) {
+      assert(() {
+        log.severe('Dependency init fail', error, stackTrace);
+        return true;
+      }());
+      onError(error, stackTrace);
+    } finally {
+      stopwatch.stop();
+      log.info('time to start ${stopwatch.elapsedMilliseconds} ms');
+      binding.addPostFrameCallback((_) {
+        binding.allowFirstFrame();
+      });
+      _$initializeDependency = null;
+    }
   }
 }

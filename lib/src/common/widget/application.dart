@@ -1,10 +1,8 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
-import 'package:starter_template/src/common/extensions/build_context.dart';
 import 'package:starter_template/src/common/model/dependency_storage.dart';
 
 import 'dependency_scope.dart';
-
-typedef DependencyFactory<DependencyStorage extends IDependenciesStorage> = DependencyStorage Function();
 
 @immutable
 abstract class AppWrapper<DependencyStorage extends IDependenciesStorage> extends StatelessWidget {
@@ -13,7 +11,7 @@ abstract class AppWrapper<DependencyStorage extends IDependenciesStorage> extend
     required this.dependencyFactory,
   });
 
-  final DependencyFactory<DependencyStorage> dependencyFactory;
+  final Factory<DependencyStorage> dependencyFactory;
 
   @protected
   Widget buildApp(DependencyStorage storage);
@@ -21,9 +19,9 @@ abstract class AppWrapper<DependencyStorage extends IDependenciesStorage> extend
   @override
   Widget build(BuildContext context) {
     return DependenciesScope(
-      create: (_) => dependencyFactory(),
+      create: (_) => dependencyFactory.constructor(),
       child: Builder(
-        builder: (context) => buildApp(context.dependency<DependencyStorage>()),
+        builder: (context) => buildApp(DependenciesScope.of<DependencyStorage>(context)),
       ),
     );
   }

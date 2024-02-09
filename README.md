@@ -15,15 +15,14 @@ Project structure
 
 - Localization, extensions, assets, enviroment.
 - Settings controller and settings service.
-- Runner - runed application inside guarded zone and log events. Show Splash screen or Error screen.
+- Runner - run application inside guarded zone and log events. Show Splash screen or Error screen.
 - Dependency scope - simple dependency provider.
 - Scope - abstract class for your scope implementation
 - AppWrapper - wrap your application widget for provide dependency.
 
 ### [feature](lib/src/feature)
 
-- Web - your web application.
-- Mobile - your mobile aplication.
+- app - general entry point in your app.
 
 ## Used base packages
 
@@ -46,10 +45,8 @@ Project structure
 - [sqlite3_flutter_libs](https://pub.dev/packages/sqlite3_flutter_libs)
 - [shared_preferences](https://pub.dev/packages/shared_preferences)
 
-### Generation data class
+### Generation
 
-- [freezed](https://pub.dev/packages/freezed)
-- [freezed_annotation](https://pub.dev/packages/freezed_annotation)
 - [json_serializable](https://pub.dev/packages/json_serializable)
 - [json_annotation](https://pub.dev/packages/json_annotation)
 
@@ -60,12 +57,10 @@ Project structure
 - [collection](https://pub.dev/packages/collection)
 - [path_provider](https://pub.dev/packages/path_provider)
 - [path](https://pub.dev/packages/path)
-- [provider](https://pub.dev/packages/provider)
 
 ### Platform help plugins
 
-- [image_picker](https://pub.dev/packages/image_picker)
-- [url_launcher](https://pub.dev/packages/url_launcher)
+- [package_info_plus](https://pub.dev/packages/package_info_plus)
 
 ## How to guides
 

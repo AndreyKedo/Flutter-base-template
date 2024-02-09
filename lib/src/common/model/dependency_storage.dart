@@ -1,3 +1,5 @@
+import 'dart:async';
+
 abstract class IDependenciesStorage {
-  void close();
+  FutureOr<void> close();
 }
