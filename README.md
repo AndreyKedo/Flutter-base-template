@@ -2,10 +2,20 @@
 
 Flutter template project
 
+## Description
+
+Project use FVM for manage Flutter framework version
+
 ## Getting Started
 
 This project is a starting point for a Flutter application.
 Very simple template for build application
+
+## Automation
+
+Use `make help` for getting more info.
+
+Available VS Code tasks! Look [Tasks](.vscode/tasks.json)
 
 ## Structure
 
