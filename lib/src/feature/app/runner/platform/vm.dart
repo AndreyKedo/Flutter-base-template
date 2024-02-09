@@ -25,7 +25,7 @@ class Runner extends IRunner<DependencyStorage> {
 
   @override
   FutureOr<Factory<DependencyStorage>> initialization() async {
-    if (EnvironmentConfig.kFlavor.beta) {
+    if (EnvironmentConfig.env.isQa) {
       log.level = Level.SEVERE;
     }
 

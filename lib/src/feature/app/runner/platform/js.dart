@@ -32,7 +32,7 @@ class Runner extends IRunner<DependencyStorage> {
     // ignore: prefer_const_constructors
     setUrlStrategy(PathUrlStrategy());
 
-    if (EnvironmentConfig.kFlavor.beta) {
+    if (EnvironmentConfig.env.isQa) {
       log.level = Level.SEVERE;
     }
 

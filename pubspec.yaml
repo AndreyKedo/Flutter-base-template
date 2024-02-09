@@ -28,6 +28,7 @@ dependencies:
   path_provider: ^2.0.11
   collection: ^1.17.0
   rxdart: ^0.27.7
+  meta: ^1.10.0
 
   #Database
   drift: ^2.2.0
