@@ -25,8 +25,8 @@ class Runner extends IRunner<DependencyStorage> {
 
   @override
   FutureOr<Factory<DependencyStorage>> initialization() async {
-    if (EnvironmentConfig.env.isQa) {
-      log.level = Level.SEVERE;
+    if (EnvironmentConfig.env.isQA) {
+      log.level = Level.WARNING;
     }
 
     return $initializedDependency(log);
