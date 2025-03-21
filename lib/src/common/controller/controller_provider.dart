@@ -17,7 +17,7 @@ class ControllerScope<C extends Listenable> extends InheritedWidget {
     Widget? child,
     bool lazy = true,
     super.key,
-  })  : _dependency = _ControllerDependency$Create<C>(
+  })  : _dependency = _ControllerDependencyCreate<C>(
           create: create,
           lazy: lazy,
         ),
@@ -27,7 +27,7 @@ class ControllerScope<C extends Listenable> extends InheritedWidget {
     required C controller,
     Widget? child,
     super.key,
-  })  : _dependency = _ControllerDependency$Value<C>(controller: controller),
+  })  : _dependency = _ControllerDependencyValue<C>(controller: controller),
         super(child: child ?? const SizedBox.shrink());
 
   final _ControllerDependency<C> _dependency;
@@ -97,8 +97,8 @@ final class ControllerScope$Element<C extends Listenable> extends InheritedEleme
       return _controller!;
     }
     final c = switch (_dependency) {
-      final _ControllerDependency$Create<C> d => d.create(this),
-      final _ControllerDependency$Value<C> d => d.controller,
+      final _ControllerDependencyCreate<C> d => d.create(this),
+      final _ControllerDependencyValue<C> d => d.controller,
     };
     return c;
   }
@@ -107,10 +107,10 @@ final class ControllerScope$Element<C extends Listenable> extends InheritedEleme
   void mount(Element? parent, Object? newSlot) {
     if (_controller == null) {
       switch (_dependency) {
-        case final _ControllerDependency$Create<C> d:
+        case final _ControllerDependencyCreate<C> d:
           if (!d.lazy) _controller = d.create(this);
           break;
-        case final _ControllerDependency$Value<C> d:
+        case final _ControllerDependencyValue<C> d:
           _controller = d.controller;
           break;
       }
@@ -125,17 +125,17 @@ final class ControllerScope$Element<C extends Listenable> extends InheritedEleme
     final newDependency = newWidget._dependency;
     if (!identical(oldDependency, newDependency)) {
       switch (newDependency) {
-        case final _ControllerDependency$Create<C> d:
+        case final _ControllerDependencyCreate<C> d:
           assert(
-            oldDependency is _ControllerDependency$Create<C>,
+            oldDependency is _ControllerDependencyCreate<C>,
             'Cannot change scope type',
           );
           if (_controller == null && (!d.lazy || _subscribed)) {
             _controller = d.create(this);
           }
-        case final _ControllerDependency$Value<C> d:
+        case final _ControllerDependencyValue<C> d:
           assert(
-            oldDependency is _ControllerDependency$Value<C>,
+            oldDependency is _ControllerDependencyValue<C>,
             'Cannot change scope type',
           );
           final newController = d.controller;
@@ -186,7 +186,7 @@ final class ControllerScope$Element<C extends Listenable> extends InheritedEleme
     listenable?.removeListener(_handleUpdate);
     _subscribed = false;
     // Dispose controller if it was created by this scope
-    if (_dependency is _ControllerDependency$Create<C> && listenable is ChangeNotifier) listenable.dispose();
+    if (_dependency is _ControllerDependencyCreate<C> && listenable is ChangeNotifier) listenable.dispose();
     super.unmount();
   }
 
@@ -202,8 +202,8 @@ sealed class _ControllerDependency<C extends Listenable> {
   const _ControllerDependency();
 }
 
-final class _ControllerDependency$Create<C extends Listenable> extends _ControllerDependency<C> {
-  const _ControllerDependency$Create({
+final class _ControllerDependencyCreate<C extends Listenable> extends _ControllerDependency<C> {
+  const _ControllerDependencyCreate({
     required this.create,
     required this.lazy,
   });
@@ -216,11 +216,11 @@ final class _ControllerDependency$Create<C extends Listenable> extends _Controll
   int get hashCode => create.hashCode;
 
   @override
-  bool operator ==(Object other) => identical(this, other) || other is _ControllerDependency$Create;
+  bool operator ==(Object other) => identical(this, other) || other is _ControllerDependencyCreate;
 }
 
-final class _ControllerDependency$Value<C extends Listenable> extends _ControllerDependency<C> {
-  const _ControllerDependency$Value({required this.controller});
+final class _ControllerDependencyValue<C extends Listenable> extends _ControllerDependency<C> {
+  const _ControllerDependencyValue({required this.controller});
 
   final C controller;
 
@@ -229,5 +229,5 @@ final class _ControllerDependency$Value<C extends Listenable> extends _Controlle
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) || other is _ControllerDependency$Value && identical(controller, other.controller);
+      identical(this, other) || other is _ControllerDependencyValue && identical(controller, other.controller);
 }
