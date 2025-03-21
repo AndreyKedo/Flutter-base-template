@@ -6,60 +6,68 @@
 */
 
 import 'dart:async';
-import 'package:flutter/foundation.dart' show Factory;
-import 'package:flutter/widgets.dart' show WidgetsFlutterBinding;
-import 'package:logging/logging.dart';
-import 'package:starter_template/src/common/model/dependency_storage.dart';
-
 import 'dart:developer';
 
+import 'package:flutter/widgets.dart' show WidgetsFlutterBinding;
+import 'package:logging/logging.dart';
+
 import 'logger_printer.dart';
+
 export 'package:flutter/foundation.dart' show Factory;
 
-abstract class IRunner<DS extends IDependenciesStorage> {
-  Factory<DS>? _$initializeDependency;
+abstract interface class RunnerInitialization<DS> {
+  void initializeAndRun();
+  Logger createRunnerLogger();
+  Future<DS> initialization();
 
-  FutureOr<Factory<DS>> initialization();
+  void onApp(DS dependency);
 
-  void onAppRun(Factory<DS> factoryDependency);
-  void onLoading() {}
-  void onError(Object error, StackTrace stackTrace) {}
+  void onError(Object error, StackTrace stackTrace);
+}
 
-  abstract final Logger log;
+abstract class Runner<DS> implements RunnerInitialization<DS> {
+  static Logger logger = Logger.root;
 
-  void run() async {
-    hierarchicalLoggingEnabled = true;
-    log.level = Level.OFF;
+  @override
+  void initializeAndRun() async {
+    final binding = WidgetsFlutterBinding.ensureInitialized();
+    binding.deferFirstFrame();
+
+    logger = createRunnerLogger();
+
+    final rootLogger = Logger.root;
     assert(() {
-      log.level = Level.ALL;
-      log.onRecord.map(LogRecordPrinter.map).listen(LogRecordPrinter.write);
+      rootLogger.level = Level.ALL;
       return true;
     }());
-    final binding = WidgetsFlutterBinding.ensureInitialized()..deferFirstFrame();
-    onLoading();
+    rootLogger.onRecord.map(LogRecordPrinter.map).listen(LogRecordPrinter.write);
+
     final stopwatch = Stopwatch()..start();
     final flow = Flow.begin();
-    try {
-      _$initializeDependency ??= await Timeline.timeSync<FutureOr<Factory<DS>>>(
-          'Initialization dependency', initialization,
-          flow: Flow.step(flow.id));
 
-      Timeline.timeSync('UI loading', () {
-        onAppRun(_$initializeDependency!);
-      }, flow: Flow.end(flow.id));
-    } on Object catch (error, stackTrace) {
-      assert(() {
-        log.severe('Dependency init fail', error, stackTrace);
-        return true;
-      }());
-      onError(error, stackTrace);
-    } finally {
-      stopwatch.stop();
-      log.info('time to start ${stopwatch.elapsedMilliseconds} ms');
-      binding.addPostFrameCallback((_) {
+    Future<void> initialize() async {
+      try {
+        final dependency = await Timeline.timeSync<Future<DS>>(
+          'Initialization dependency',
+          () => initialization(),
+          flow: Flow.end(flow.id),
+        );
+
+        onApp(dependency);
+      } catch (error, stackTrace) {
+        onError(
+          error,
+          stackTrace,
+        );
+        rethrow;
+      } finally {
+        stopwatch.stop();
         binding.allowFirstFrame();
-      });
-      _$initializeDependency = null;
+
+        logger.info('Time to start ${stopwatch.elapsedMilliseconds} ms');
+      }
     }
+
+    await initialize();
   }
 }

@@ -1,9 +1,19 @@
 {
-  "dart.flutterSdkPath": ".fvm/versions/3.22.2",
+  "dart.flutterSdkPath": ".fvm/versions/3.29.2",
   "search.exclude": {
     "**/.fvm": true
   },
   "files.watcherExclude": {
     "**/.fvm": true
-  }
+  },
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.patterns": {
+    "pubspec.yaml": "pubspec.lock,pubspec_overrides.yaml,.packages,.flutter-plugins,.flutter-plugins-dependencies,.metadata",
+    "*.dart": "${capture}.g.dart,${capture}.freezed.dart",
+    "*_bloc.dart": "${capture}_event.dart,${capture}_state.dart",
+    "*_controller.dart": "${capture}_state.dart"
+  },
+  "l10nization.appLocalizationsVariable": "localized",
+  "l10nization.yamlFile": "l10n.yaml",
+  "dart.lineLength": 120
 }

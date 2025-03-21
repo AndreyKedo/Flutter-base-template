@@ -1,22 +1,32 @@
 import 'package:collection/collection.dart';
 
-/// {@template equatable}
+/// {@template doc.common.model.equatable}
 /// Mixin class [Equatable]
 ///
 /// Simple implementation [Equatable] library without overhead.
 /// Use for implementation BLoC state and event, or object
 /// {@endtemplate}
 abstract mixin class Equatable {
-  /// {@macro equatable}
+  /// {@macro doc.common.model.equatable}
   const Equatable();
 
   static const DeepCollectionEquality _equalityHelper = DeepCollectionEquality();
 
   /// Collection of properties implemented class
-  List<Object?> get keys;
+  List<Object?> get keys => const [];
 
   @override
-  int get hashCode => runtimeType.hashCode ^ Object.hashAll(keys);
+  int get hashCode =>
+      runtimeType.hashCode ^
+      Object.hashAll(
+        keys.map(
+          (e) {
+            if (e is List || e is Map || e is Set || e is Iterable) return _equalityHelper.hash(e);
+
+            return e;
+          },
+        ),
+      );
 
   @override
   bool operator ==(Object other) =>
@@ -27,5 +37,6 @@ abstract mixin class Equatable {
   String toString() => mapPropsToString(runtimeType, keys);
 }
 
-String mapPropsToString(Type runtimeType, List<Object?> props) =>
-    '$runtimeType(${props.map((prop) => prop.toString()).join(', ')})';
+String mapPropsToString(Type runtimeType, List<Object?> props) => '$runtimeType(${props.map(
+      (prop) => prop.toString(),
+    ).join(', ')})';

@@ -1,21 +1,5 @@
-targets:
-  $default:
-    builders:
+# targets:
+#   $default:
+#     builders:
 
-      #Drift ORM
-      drift_dev:
-        options: 
-          data_class_to_companions: false
-          skip_verification_code: true
-          generate_values_in_copy_with: false
-          sql:
-            dialect: sqlite
-            options:
-              modules:
-                  - json1
-              version: "3.34"
-      
-      #JSON Serializable
-      json_serializable:
-        options:
-          create_to_json: false
+## Add settings if need

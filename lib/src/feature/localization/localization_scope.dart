@@ -1,9 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:starter_template/src/common/localization/localization.dart';
-import 'package:starter_template/src/common/logic/settings/settings_controller.dart';
 import 'package:starter_template/src/common/widget/scope.dart';
-import 'package:starter_template/src/feature/app/runner/runner.dart';
+import 'package:starter_template/src/feature/settings/settings_controller.dart';
 
 abstract class ILocalizationController {
   Locale? get locale;
@@ -80,8 +79,6 @@ base mixin _LocalizationScopeInit on ScopeDelegate<LocalizationScope> {
   /* #endregion */
 
   void _changeScopeData() {
-    setState(() {
-      Runner().log.info('Change locale ${_settings.locale}');
-    });
+    setState(() {});
   }
 }

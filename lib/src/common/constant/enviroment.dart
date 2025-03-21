@@ -1,17 +1,5 @@
-import 'package:flutter/foundation.dart' show kDebugMode;
-
-/// {@template enviroment}
-/// EnvironmentConfig is general config of project.
-/// {@endtemplate}
-sealed class EnvironmentConfig {
-  /// Getting currently [EnvironmentType].
-  ///
-  /// Available types [EnvironmentType.dev], [EnvironmentType.qa], [EnvironmentType.prod],
-  static const EnvironmentType env = String.fromEnvironment('ENVIRONMENT') as EnvironmentType;
-
-  /// Returned true is if currently running app is debug mode.
-  static const kDebug = kDebugMode;
-}
+import 'package:flutter/foundation.dart' as framework;
+import 'package:flutter/services.dart' as services;
 
 extension type const EnvironmentType(String value) implements String {
   static const EnvironmentType dev = EnvironmentType('DEV');
@@ -21,4 +9,17 @@ extension type const EnvironmentType(String value) implements String {
   bool get isProduction => this == prod;
   bool get isQA => this == qa;
   bool get isDevelop => this == dev;
+}
+
+/// EnvironmentConfig is general config of project.
+sealed class EnvironmentConfig {
+  /// Getting currently [EnvironmentType].
+  ///
+  /// Available types [EnvironmentType.dev], [EnvironmentType.qa], [EnvironmentType.prod],
+  static const EnvironmentType env = (services.appFlavor ?? String.fromEnvironment('FLAVOR')) as EnvironmentType;
+
+  /// Returned true is if currently running app is debug mode.
+  static const kDebug = framework.kDebugMode;
+
+  static const kIsWeb = framework.kIsWeb || framework.kIsWasm;
 }

@@ -1,9 +1,20 @@
-export 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart' show PlatformDispatcher;
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:starter_template/src/common/localization/localization.dart';
+
+export 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+const fallback = Locale('en');
+
+Locale computeDefaultLocale() {
+  final locale = PlatformDispatcher.instance.locale;
+
+  if (AppLocalizations.delegate.isSupported(locale)) return Locale.fromSubtags(languageCode: locale.languageCode);
+
+  return fallback;
+}
 
 ///BuildContext extension for localization
 extension AppLocalizationContextX on BuildContext {
@@ -29,28 +40,23 @@ extension AppLocalizationContextX on BuildContext {
 
   ///Supported locales list
   List<Locale> get supportedLocales => AppLocalizations.supportedLocales;
-}
 
-///AppLocalizations delegate extension
-extension AppLocalizationsX on AppLocalizations {
-  static Locale get fallback => const Locale('en');
-
-  static Locale computeDefaultLocale() {
-    final locale = PlatformDispatcher.instance.locale;
-
-    if (AppLocalizations.delegate.isSupported(locale)) return Locale.fromSubtags(languageCode: locale.languageCode);
-
-    return fallback;
-  }
-
-  ///Resolve multilocale
+  /// Format [DateTime] value by [DateFormat] formatter.
+  /// If [DateTime.isUtc] equal true, before format [DateTime] object to be is converted to local time.
+  /// If [DateTime.isUtc] equal true and isConverted false, [DateTime] object not  converted to local time.
   ///
-  ///Default [en]
-  @pragma('vm:prefer-inline')
-  @pragma('dart2js:tryInline')
-  T localeResolver<T>({required ValueGetter<T> en, ValueGetter<T>? ru, ValueGetter<T>? zh}) {
-    final map = {'en': en, 'ru': ru, 'zh': zh};
+  /// If [dateTime] equal null will be take [DateTime.now()].
+  /// If [formatter] equal null will be take this [DateFormat.yMd().add_Hm()] formatter pattern.
+  String formatDateTime({
+    DateTime? dateTime,
+    DateFormat? formatter,
+  }) {
+    dateTime ??= DateTime.now();
+    formatter ??= DateFormat.yMd(locale.languageCode).add_Hm();
 
-    return map[localeName]?.call() ?? en();
+    return switch (dateTime) {
+      final DateTime value when value.isUtc => formatter.format(value.toLocal()),
+      final DateTime value => formatter.format(value)
+    };
   }
 }

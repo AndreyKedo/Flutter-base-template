@@ -14,9 +14,7 @@ typedef DelegateAccess<D extends ScopeDelegate> = D Function(
 abstract class Scope extends StatefulWidget {
   final Widget _child;
 
-  const Scope({Key? key, required Widget child})
-      : _child = child,
-        super(key: key);
+  const Scope({required Widget child, super.key}) : _child = child;
 
   /// Accesses a delegate of a given scope through InheritedWidget location,
   /// thus making this method having complexity of O(1).
@@ -57,7 +55,7 @@ abstract class Scope extends StatefulWidget {
 /// dependant [Element] should be marked as dirty.
 ///   * [ScopeDelegate] has [scope] getter that allows accessing the delegating
 /// [Scope].
-///   * [ScopeDelegate] has [buildScoping] method that should be overriden
+///   * [ScopeDelegate] has [buildScoping] method that should be overridden
 /// instead of the [build] method. Class that extends [ScopeDelegate] should
 /// **NEVER OVERRIDE THE BUILD METHOD**. It will break things.
 abstract class ScopeDelegate<S extends Scope> extends State<S> {
@@ -80,11 +78,10 @@ class _InheritedScope<S extends Scope> extends InheritedWidget {
   final ScopeDelegate<Scope> delegate;
 
   _InheritedScope({
-    Key? key,
     required this.delegate,
-    required Widget child,
-  })  : keys = delegate.keys,
-        super(child: child, key: key);
+    required super.child,
+    super.key,
+  }) : keys = delegate.keys;
 
   @override
   bool updateShouldNotify(_InheritedScope<S> oldWidget) => !const DeepCollectionEquality().equals(keys, oldWidget.keys);

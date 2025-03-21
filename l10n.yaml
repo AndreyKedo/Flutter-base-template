@@ -3,3 +3,6 @@ template-arb-file: app_en.arb
 output-localization-file: app_localizations.dart
 untranslated-messages-file: desiredFileName.txt
 use-deferred-loading: true
+preferred-supported-locales:
+  - ru
+  - en

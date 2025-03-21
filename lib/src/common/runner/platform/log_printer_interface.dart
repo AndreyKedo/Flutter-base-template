@@ -7,14 +7,22 @@
 import 'package:logging/logging.dart' show LogRecord, Level;
 
 abstract class ILogPrinter extends LogRecord {
-  ILogPrinter(super.level, super.message, super.loggerName, [super.error, super.stackTrace, super.zone, super.object]);
+  ILogPrinter(
+    super.level,
+    super.message,
+    super.loggerName, [
+    super.error,
+    super.stackTrace,
+    super.zone,
+    super.object,
+  ]);
 
   static final Map<Level, String> _levelEmojiMap = {
     Level.SHOUT: '🫣', //исключение
     Level.SEVERE: '🔥', //ошибка
     Level.WARNING: '❗️', //предупреждение
     Level.INFO: 'ℹ️', // информация
-    Level.FINE: '✅' // больше информации
+    Level.FINE: '✅', // больше информации
   };
   static const String _defaultEmoji = '🤨';
 
@@ -22,7 +30,7 @@ abstract class ILogPrinter extends LogRecord {
     Level.SEVERE: '\x1B[31m',
     Level.WARNING: '\x1B[33m',
     Level.INFO: '\x1B[32m',
-    Level.FINE: '\x1B[37m'
+    Level.FINE: '\x1B[37m',
   };
   static const String _defaultConsoleColor = '\x1B[34m';
 
@@ -30,18 +38,13 @@ abstract class ILogPrinter extends LogRecord {
 
   bool get isError => error != null || stackTrace != null;
 
-  String _dateTimeToString(DateTime dateTime) =>
-      [dateTime.hour, dateTime.minute, dateTime.second].map(_timeFormat).join(':');
-
-  String _timeFormat(int input) => input.toString().padLeft(2, '0');
-
   String _colorByLevel(Level level) => _colorConsoleCodes[level] ?? _defaultConsoleColor;
 
-  String mapLevel(Level level) => _levelEmojiMap[level] ?? _defaultEmoji;
-  String strColorWrapper(Level level, String src) => '${_colorByLevel(level)}$src\x1B[0m';
+  String get levelEmoji => _levelEmojiMap[level] ?? _defaultEmoji;
+  String strColorWrapper(String src) => '${_colorByLevel(level)}$src\x1B[0m';
+
+  void print();
 
   @override
-  String toString() {
-    return '${mapLevel(level)} ${strColorWrapper(level, _dateTimeToString(time))} ${strColorWrapper(level, '[$loggerName]')}';
-  }
+  String toString() => '$levelEmoji ${strColorWrapper('[${level.name}]')} ${strColorWrapper(message)}';
 }

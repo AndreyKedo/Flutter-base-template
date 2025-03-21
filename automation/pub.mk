@@ -1,9 +1,17 @@
 .PHONY: get outdated upgrade upgrade-major add-package clean fix gen-locale
 
+ifeq (clean,$(firstword $(MAKECMDGOALS)))
+  CLEAN_TYPE := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
+  $(eval $(CLEAN_TYPE):;@:)
+endif
+
 clean:
 	@echo "* Cleaning project *"
+ifneq (,$(findstring force,$(CLEAN_TYPE)))
+	 @(echo -e "Y" |	$(flutter) pub cache clean)
+endif
+	@$(flutter) clean
 	@rm -rf build .flutter-plugins .flutter-plugins-dependencies .dart_tool .packages pubspec.lock ios/Podfile.lock
-	$(flutter) clean
 
 fix:
 	@echo "* Dart code fix *"

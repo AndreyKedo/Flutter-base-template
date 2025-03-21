@@ -11,7 +11,7 @@
             "args": [
                 "--web-browser-flag",
                 "--disable-web-security",
-                "--dart-define-from-file=config.json"
+                "--dart-define-from-file=.env"
             ]
         },
         {
@@ -23,7 +23,7 @@
             "args": [
                 "--web-browser-flag",
                 "--disable-web-security",
-                "--dart-define-from-file=config.json"
+                "--dart-define-from-file=.env"
             ]
         }
     ]
