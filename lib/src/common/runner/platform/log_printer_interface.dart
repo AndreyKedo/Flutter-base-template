@@ -1,9 +1,3 @@
-/*
-* log_printer_interface.dart
-* Message formatting 
-* Dashkevich Andrey <dashkevich@ittest-team.ru>, 17 January 2024
-*/
-
 import 'package:logging/logging.dart' show LogRecord, Level;
 
 abstract class ILogPrinter extends LogRecord {

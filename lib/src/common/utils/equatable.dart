@@ -1,13 +1,10 @@
 import 'package:collection/collection.dart';
 
-/// {@template doc.common.model.equatable}
 /// Mixin class [Equatable]
 ///
 /// Simple implementation [Equatable] library without overhead.
 /// Use for implementation BLoC state and event, or object
-/// {@endtemplate}
 abstract mixin class Equatable {
-  /// {@macro doc.common.model.equatable}
   const Equatable();
 
   static const DeepCollectionEquality _equalityHelper = DeepCollectionEquality();
