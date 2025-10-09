@@ -1,0 +1,8 @@
+{
+  "@@locale": "ru",
+  "appName": "FlutterBase",
+  "@appName": {
+    "description": "Application title",
+    "type": "text"
+  }
+}

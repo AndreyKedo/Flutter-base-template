@@ -27,12 +27,11 @@ migrate_working_dir/
 **/doc/api/
 **/ios/Flutter/.last_build_id
 .dart_tool/
-.flutter-plugins
 .flutter-plugins-dependencies
 .pub-cache/
 .pub/
 /build/
-.env
+/coverage/
 
 # Symbolication related
 app.*.symbols
@@ -40,10 +39,13 @@ app.*.symbols
 # Obfuscation related
 app.*.map.json
 
+# Obfuscation folder
+/v*.*.*/
+
 # Android Studio will place build artifacts here
 /android/app/debug
 /android/app/profile
 /android/app/release
 
-# FVM Version Cache
-.fvm/
+#Artifacts
+/artifacts/

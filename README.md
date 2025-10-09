@@ -2,17 +2,7 @@
 
 Flexible base flutter application project structure.
 
-Project used [FVM](https://fvm.app/docs/getting_started/overview)
-
-
 ### How run
-
-You can use [automation](Makefile) make commands. 
-For more details see.
-
-```bash
-make help
-```
 
 1. Clone this repository via `git clone`.
 2. Decide which platforms your app will be running on.
