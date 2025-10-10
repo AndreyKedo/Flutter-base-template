@@ -10,3 +10,13 @@ Flexible base flutter application project structure.
 4. Run `flutter pub get` to install all dependencies.
 5. Run `flutter run` to run your app.
 6. Here you go, start coding!
+
+### Package renaming
+
+To rename the package to your own name, use the provided script:
+
+```bash
+./rename_package.sh --new-name your_new_package_name
+```
+
+For more options, see [scripts/README.md](scripts/README.md)

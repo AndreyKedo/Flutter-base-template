@@ -1,0 +1,16 @@
+name: rename_package_script
+description: A script to rename Flutter package name in pubspec.yaml and imports
+version: 1.0.0
+
+environment:
+  sdk: ^3.9.2
+
+dependencies:
+  args: ^2.4.0
+  path: ^1.8.0
+  yaml: ^3.1.0
+  yaml_edit: ^2.0.0
+  ansi_styles: any
+
+dev_dependencies:
+  lints: ^6.0.0
