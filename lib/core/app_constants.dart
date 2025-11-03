@@ -4,5 +4,4 @@ abstract final class AppConstants {
 
 abstract final class ApplicationExceptionCode {
   static const timeout = 'NETWORK_TIMEOUT';
-  static const socketConnectionFailed = 'SOCKET_CONNECTION_FAILED';
 }

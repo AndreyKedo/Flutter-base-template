@@ -5,16 +5,25 @@ import 'package:flutter/material.dart';
 
 typedef AppNavigationState = List<AppPage>;
 
-/// Неизменяемая страница для использования с [AppNavigator].
+typedef AppNavigatorBackCallback = ({AppNavigationState state, bool handled}) Function(AppNavigationState state);
+
+typedef AppNavigatorGuardCallback = AppNavigationState Function(BuildContext context, AppNavigationState state);
+
+/// Конфигурация маршрута.
 ///
 /// Расширяет [MaterialPage] с дополнительной логикой для работы с [AppNavigator].
 @immutable
 class AppPage extends MaterialPage<void> {
   /// Создает страницу с указанным именем и дочерним виджетом.
   ///
-  /// Если [key] не предоставлен, будет создан автоматически на основе [name] и [arguments].
-  AppPage({required String super.name, required super.child, LocalKey? key, Map<String, Object?>? super.arguments})
-    : super(key: key ?? ValueKey('$name-page-key'));
+  /// Если [key] не предоставлен, будет создан автоматически на основе [name].
+  AppPage({
+    required String super.name,
+    required super.child,
+    LocalKey? key,
+    super.canPop,
+    Map<String, Object?>? super.arguments,
+  }) : super(key: key ?? ValueKey('$name-page-key'));
 
   @override
   String get name => super.name ?? 'Unknown';
@@ -101,10 +110,15 @@ class AppNavigator extends StatefulWidget {
   /// Очистить страницы до начального состояния.
   ///
   /// Сбрасывает стек страниц к начальному состоянию, заданному в виджете.
-  static void reset(BuildContext context, AppPage page) {
+  /// Если [page] не указан, то используется начальное состояние. Если [page] указан, то стек страниц будет содержать [page].
+  static void reset(BuildContext context, [AppPage? page]) {
     final navigator = maybeOf(context);
     if (navigator == null) return;
-    navigator.change((_) => navigator.widget.pages);
+    if (page != null) {
+      navigator.change((_) => [page]);
+    } else {
+      navigator.change((_) => navigator.widget.pages);
+    }
   }
 
   /// Начальные страницы для отображения.
@@ -115,10 +129,10 @@ class AppNavigator extends StatefulWidget {
   /// Если предоставлен, навигатор будет слушать изменения этого контроллера.
   final ValueNotifier<AppNavigationState>? controller;
 
-  /// Защитники для применения к страницам.
+  /// Промежуточные обработчики.
   ///
   /// Каждый guard - это функция, которая может изменить или отклонить состояние навигации.
-  final List<AppNavigationState Function(BuildContext context, AppNavigationState state)> guards;
+  final List<AppNavigatorGuardCallback> guards;
 
   /// Наблюдатели для прикрепления к навигатору.
   ///
@@ -142,7 +156,7 @@ class AppNavigator extends StatefulWidget {
   /// в противном случае возвращать логическое значение false.
   ///
   /// Также можно изменить [AppNavigationState] для изменения стека навигации.
-  final ({AppNavigationState state, bool handled}) Function(AppNavigationState state)? onBackButtonPressed;
+  final AppNavigatorBackCallback? onBackButtonPressed;
 
   @override
   State<AppNavigator> createState() => AppNavigatorState();
@@ -151,7 +165,7 @@ class AppNavigator extends StatefulWidget {
 /// Состояние для виджета AppNavigator.
 ///
 /// Управляет стеком страниц, слушателями и обработчиками событий.
-class AppNavigatorState extends State<AppNavigator> with WidgetsBindingObserver {
+class AppNavigatorState extends State<AppNavigator> {
   /// Текущее состояние [Navigator] (null, если еще не построено).
   NavigatorState? get navigator => _observer.navigator;
   final NavigatorObserver _observer = NavigatorObserver();
@@ -160,6 +174,8 @@ class AppNavigatorState extends State<AppNavigator> with WidgetsBindingObserver 
   AppNavigationState get state => UnmodifiableListView<AppPage>(_state);
 
   late AppNavigationState _state;
+  late BackButtonDispatcher _backButtonDispatcher;
+
   List<NavigatorObserver> _observers = const [];
 
   /* #region Жизненный цикл */
@@ -176,8 +192,8 @@ class AppNavigatorState extends State<AppNavigator> with WidgetsBindingObserver 
     widget.controller?.addListener(_controllerListener);
     // Вызываем слушатель контроллера для инициализации
     _controllerListener();
-    // Добавляем наблюдатель за жизненным циклом приложения
-    WidgetsBinding.instance.addObserver(this);
+    // Инициализируем обработчик кнопки назад
+    _prepareBackButtonDispatcher();
   }
 
   @override
@@ -209,8 +225,8 @@ class AppNavigatorState extends State<AppNavigator> with WidgetsBindingObserver 
 
   @override
   void dispose() {
-    // Удаляем наблюдателя за жизненным циклом приложения
-    WidgetsBinding.instance.removeObserver(this);
+    // Удаляем обработчик кнопки назад
+    _disposeBackButtonDispatcher();
     // Удаляем слушатель контроллера
     widget.controller?.removeListener(_controllerListener);
     // Удаляем слушатель revalidate
@@ -219,8 +235,9 @@ class AppNavigatorState extends State<AppNavigator> with WidgetsBindingObserver 
   }
   /* #endregion */
 
-  @override
-  Future<bool> didPopRoute() {
+  Future<bool> _didPopRoute() async {
+    if (!mounted) return SynchronousFuture<bool>(false);
+
     // Если определен обработчик кнопки назад, вызываем его
     final backButtonHandler = widget.onBackButtonPressed;
     if (backButtonHandler != null) {
@@ -229,12 +246,31 @@ class AppNavigatorState extends State<AppNavigator> with WidgetsBindingObserver 
       return SynchronousFuture(result.handled);
     }
 
-    // Иначе обрабатываем нажатие кнопки назад стандартным образом
-    // Если в стеке меньше 2 страниц, не обрабатываем (вернуть false)
-    if (_state.length < 2) return SynchronousFuture(false);
-    // Удаляем последнюю страницу из стека
-    _onDidRemovePage(_state.last);
-    return SynchronousFuture(true);
+    final nav = navigator;
+    assert(nav != null, 'Navigator is not attached to the OctopusDelegate');
+    if (nav == null) return SynchronousFuture<bool>(false);
+
+    final result = await nav.maybePop();
+    await Future.delayed(Duration.zero);
+    return result;
+  }
+
+  void _prepareBackButtonDispatcher() {
+    final parent = AppNavigator.maybeOf(context);
+    if (parent == null) {
+      _backButtonDispatcher = RootBackButtonDispatcher()
+        ..addCallback(_didPopRoute)
+        ..takePriority();
+    } else {
+      _backButtonDispatcher = parent._backButtonDispatcher.createChildBackButtonDispatcher();
+      _backButtonDispatcher
+        ..addCallback(_didPopRoute)
+        ..takePriority();
+    }
+  }
+
+  void _disposeBackButtonDispatcher() {
+    _backButtonDispatcher.removeCallback(_didPopRoute);
   }
 
   /// Синхронизировать состояние с контроллером.

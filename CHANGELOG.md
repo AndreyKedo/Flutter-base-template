@@ -14,3 +14,7 @@ Initial version.
 ## 1.1.0
 
 * Added script for package rename.
+
+## 1.1.1
+
+* Fix back button handle in [AppNavigator](lib/core/widget/app_navigator.dart)

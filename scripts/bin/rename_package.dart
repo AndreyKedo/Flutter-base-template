@@ -22,12 +22,7 @@ void main(List<String> arguments) {
       valueHelp: Options.newName.help?.valueHelp,
     )
     ..addFlag(Flags.initRepo, help: Flags.initRepo.help, negatable: false)
-    ..addFlag(
-      Flags.helps,
-      abbr: Flags.helps.abbr,
-      help: Flags.helps.help,
-      negatable: false,
-    );
+    ..addFlag(Flags.helps, abbr: Flags.helps.abbr, help: Flags.helps.help, negatable: false);
 
   late ArgResults argResults;
   try {
@@ -39,13 +34,7 @@ void main(List<String> arguments) {
   }
 
   if (argResults['help'] as bool) {
-    stdout.writeln(
-      AnsiStyles.cyan(
-        AnsiStyles.bold(
-          'Rename Flutter package name in pubspec.yaml and imports',
-        ),
-      ),
-    );
+    stdout.writeln(AnsiStyles.cyan(AnsiStyles.bold('Rename Flutter package name in pubspec.yaml and imports')));
     stdout.writeln(parser.usage);
     exit(0);
   }
@@ -57,9 +46,7 @@ void main(List<String> arguments) {
   }
 
   if (!argResults.wasParsed(Options.newName)) {
-    stderr.writeln(
-      AnsiStyles.red('${AnsiStyles.bold('Error:')} --new-name is required'),
-    );
+    stderr.writeln(AnsiStyles.red('${AnsiStyles.bold('Error:')} --new-name is required'));
     stderr.writeln(parser.usage);
     exit(1);
   }
@@ -70,18 +57,12 @@ void main(List<String> arguments) {
       : _extractPackageName('pubspec.yaml');
 
   if (oldName.isEmpty) {
-    stderr.writeln(
-      AnsiStyles.red(
-        '${AnsiStyles.bold('Error:')} Could not determine old package name',
-      ),
-    );
+    stderr.writeln(AnsiStyles.red('${AnsiStyles.bold('Error:')} Could not determine old package name'));
     exit(1);
   }
 
   stdout.writeln(
-    AnsiStyles.green(
-      'Renaming package from "${AnsiStyles.bold(oldName)}" to "${AnsiStyles.bold(newName)}"',
-    ),
+    AnsiStyles.green('Renaming package from "${AnsiStyles.bold(oldName)}" to "${AnsiStyles.bold(newName)}"'),
   );
 
   // Update pubspec.yaml
@@ -93,11 +74,7 @@ void main(List<String> arguments) {
   // Fetch dependency
   _fetchDependency();
 
-  stdout.writeln(
-    AnsiStyles.green(
-      AnsiStyles.bold('Package renaming completed successfully!'),
-    ),
-  );
+  stdout.writeln(AnsiStyles.green(AnsiStyles.bold('Package renaming completed successfully!')));
 
   exit(0);
 }
@@ -106,9 +83,7 @@ void main(List<String> arguments) {
 String _extractPackageName(String pubspecPath) {
   final file = File(pubspecPath);
   if (!file.existsSync()) {
-    stderr.writeln(
-      AnsiStyles.red('${AnsiStyles.bold('Error:')} pubspec.yaml not found'),
-    );
+    stderr.writeln(AnsiStyles.red('${AnsiStyles.bold('Error:')} pubspec.yaml not found'));
     exit(1);
   }
 
@@ -117,11 +92,7 @@ String _extractPackageName(String pubspecPath) {
 
   final name = yaml['name'];
   if (name == null) {
-    stderr.writeln(
-      AnsiStyles.red(
-        '${AnsiStyles.bold('Error:')} name field not found in pubspec.yaml',
-      ),
-    );
+    stderr.writeln(AnsiStyles.red('${AnsiStyles.bold('Error:')} name field not found in pubspec.yaml'));
     exit(1);
   }
 
@@ -132,9 +103,7 @@ String _extractPackageName(String pubspecPath) {
 void _updatePubspecYaml(String pubspecPath, String newName) {
   final file = File(pubspecPath);
   if (!file.existsSync()) {
-    stderr.writeln(
-      AnsiStyles.red('${AnsiStyles.bold('Error:')} pubspec.yaml not found'),
-    );
+    stderr.writeln(AnsiStyles.red('${AnsiStyles.bold('Error:')} pubspec.yaml not found'));
     exit(1);
   }
 
@@ -203,18 +172,10 @@ void _initializeRepository() {
   // Initialize new repository
   final result = Process.runSync('git', ['init']);
   if (result.exitCode != 0) {
-    stderr.writeln(
-      AnsiStyles.red(
-        '${AnsiStyles.bold('Error initializing git repository:')} ${result.stderr}',
-      ),
-    );
+    stderr.writeln(AnsiStyles.red('${AnsiStyles.bold('Error initializing git repository:')} ${result.stderr}'));
     exit(1);
   }
 
-  stdout.writeln(
-    AnsiStyles.green(
-      AnsiStyles.bold('Git repository initialized successfully!'),
-    ),
-  );
+  stdout.writeln(AnsiStyles.green(AnsiStyles.bold('Git repository initialized successfully!')));
   stdout.writeln(result.stdout);
 }
