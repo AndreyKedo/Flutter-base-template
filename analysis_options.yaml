@@ -4,6 +4,14 @@ formatter:
   page_width: 120
 
 analyzer:
+  exclude:
+    - "build/**"
+    - "**/*.freezed.dart"
+    - "**/*.g.dart"
+    - "**/*.gr.dart"
+    - "**/*.gen.dart"
+    - "test/**"
+
   errors:
     collection_methods_unrelated_type: error
     prefer_void_to_null: error
@@ -11,6 +19,9 @@ analyzer:
     unsafe_html: error
     always_declare_return_types: error
     cancel_subscriptions: error
+    avoid_web_libraries_in_flutter: error
+    avoid_unnecessary_containers: warning
+    avoid_relative_lib_imports: warning
     empty_statements: warning
     use_key_in_widget_constructors: warning
     annotate_overrides: warning
@@ -20,6 +31,9 @@ analyzer:
     unnecessary_await_in_return: warning
     omit_local_variable_types: warning
     prefer_collection_literals: warning
+    await_only_futures: warning
+    depend_on_referenced_packages: warning
+    sized_box_for_whitespace: warning
 
 linter:
   rules:
@@ -77,10 +91,17 @@ linter:
     - prefer_collection_literals
     - prefer_iterable_whereType
     - prefer_function_declarations_over_variables
+    - await_only_futures
+    - depend_on_referenced_packages
+    - exhaustive_cases
+    - file_names
     # Flutter
+    - avoid_web_libraries_in_flutter
+    - avoid_unnecessary_containers
     - flutter_style_todos
     - use_decorated_box
     - use_colored_box
     - use_key_in_widget_constructors
     - sort_child_properties_last
     - always_put_required_named_parameters_first
+    - sized_box_for_whitespace
