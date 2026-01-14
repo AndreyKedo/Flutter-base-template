@@ -3,10 +3,84 @@ include: package:flutter_lints/flutter.yaml
 formatter: 
   page_width: 120
 
+analyzer:
+  errors:
+    collection_methods_unrelated_type: error
+    prefer_void_to_null: error
+    use_build_context_synchronously: error
+    unsafe_html: error
+    always_declare_return_types: error
+    cancel_subscriptions: error
+    empty_statements: warning
+    use_key_in_widget_constructors: warning
+    annotate_overrides: warning
+    use_string_buffers: warning
+    use_named_constants: warning
+    unnecessary_brace_in_string_interps: warning
+    unnecessary_await_in_return: warning
+    omit_local_variable_types: warning
+    prefer_collection_literals: warning
+
 linter:
   rules:
-    avoid_print: true 
-    prefer_single_quotes: true
-    require_trailing_commas: true
-    prefer_const_constructors: true
-    prefer_const_declarations: true
+    # Dart
+    - avoid_print 
+    - prefer_single_quotes
+    - require_trailing_commas
+    - prefer_const_constructors
+    - prefer_const_declarations
+    - use_super_parameters
+    - avoid_types_as_parameter_names
+    - avoid_empty_else
+    - avoid_relative_lib_imports
+    - collection_methods_unrelated_type
+    - control_flow_in_finally
+    - empty_statements
+    - prefer_void_to_null
+    - annotate_overrides
+    - use_build_context_synchronously
+    - use_string_buffers
+    - use_setters_to_change_properties
+    - use_rethrow_when_possible
+    - use_named_constants
+    - use_is_even_rather_than_modulo
+    - use_if_null_to_convert_nulls_to_bools
+    - use_function_type_syntax_for_parameters
+    - use_full_hex_values_for_flutter_colors
+    - unsafe_html
+    - unrelated_type_equality_checks
+    - unnecessary_this
+    - unnecessary_string_interpolations
+    - unnecessary_string_escapes
+    - unnecessary_new
+    - unnecessary_nullable_for_final_variable_declarations
+    - unnecessary_null_in_if_null_operators
+    - unnecessary_null_aware_assignments
+    - constant_identifier_names
+    - unnecessary_statements
+    - unnecessary_overrides
+    - unnecessary_const
+    - prefer_typing_uninitialized_variables
+    - always_declare_return_types
+    - avoid_bool_literals_in_conditional_expressions
+    - avoid_catching_errors
+    - avoid_function_literals_in_foreach_calls
+    - avoid_init_to_null
+    - cancel_subscriptions
+    - unnecessary_brace_in_string_interps
+    - unnecessary_await_in_return
+    - unawaited_futures
+    - type_init_formals
+    - omit_local_variable_types
+    - one_member_abstracts
+    - prefer_generic_function_type_aliases
+    - prefer_collection_literals
+    - prefer_iterable_whereType
+    - prefer_function_declarations_over_variables
+    # Flutter
+    - flutter_style_todos
+    - use_decorated_box
+    - use_colored_box
+    - use_key_in_widget_constructors
+    - sort_child_properties_last
+    - always_put_required_named_parameters_first
