@@ -39,7 +39,7 @@ extension type AppLogger._(Logger _logger) {
   /// Resume log sequence
   static void resume() => _loggerSub?.resume();
 
-  void setLogLevel(Level value) => _logger.level = value;
+  set logLevel(Level value) => _logger.level = value;
 
   /// Info
   void i(Object? message, [Object? error, StackTrace? stackTrace]) => _logger.info(message, error, stackTrace);

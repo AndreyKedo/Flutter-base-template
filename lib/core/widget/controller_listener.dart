@@ -33,9 +33,7 @@ class ControllerListenerElement<Controller extends ValueListenable<State>, State
 
     final cont = controller;
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      cont.addListener(_listener);
-    });
+    cont.addListener(_listener);
   }
 
   @override
