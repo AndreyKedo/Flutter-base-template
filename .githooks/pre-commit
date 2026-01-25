@@ -1,0 +1,4 @@
+#!/bin/bash
+# Unix version
+cd "$(dirname "$0")/../" || exit 1
+exec dart run bin/pre_commit.dart
