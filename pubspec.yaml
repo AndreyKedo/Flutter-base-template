@@ -19,11 +19,14 @@ dependencies:
 
   #Utils
   logging: ^1.3.0
+  async: ^2.13.0
+  collection: ^1.19.1
 
   #Network
   http_middleware_client: ^1.0.0+2
   http: ^1.5.0
-  
+
+ 
 dev_dependencies:
   flutter_test:
     sdk: flutter

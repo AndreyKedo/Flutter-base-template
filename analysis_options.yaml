@@ -8,7 +8,6 @@ analyzer:
     - "build/**"
     - "**/*.freezed.dart"
     - "**/*.g.dart"
-    - "**/*.gr.dart"
     - "**/*.gen.dart"
     - "test/**"
 
@@ -34,6 +33,8 @@ analyzer:
     await_only_futures: warning
     depend_on_referenced_packages: warning
     sized_box_for_whitespace: warning
+    avoid_print: warning
+    unused_import: warning
 
 linter:
   rules:
