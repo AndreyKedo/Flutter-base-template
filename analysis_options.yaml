@@ -35,6 +35,7 @@ analyzer:
     sized_box_for_whitespace: warning
     avoid_print: warning
     unused_import: warning
+    avoid_dynamic_calls: error
 
 linter:
   rules:
@@ -62,7 +63,6 @@ linter:
     - use_if_null_to_convert_nulls_to_bools
     - use_function_type_syntax_for_parameters
     - use_full_hex_values_for_flutter_colors
-    - unsafe_html
     - unrelated_type_equality_checks
     - unnecessary_this
     - unnecessary_string_interpolations
@@ -96,6 +96,7 @@ linter:
     - depend_on_referenced_packages
     - exhaustive_cases
     - file_names
+    - avoid_dynamic_calls
     # Flutter
     - avoid_web_libraries_in_flutter
     - avoid_unnecessary_containers

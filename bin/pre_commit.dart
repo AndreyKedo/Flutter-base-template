@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:meta/meta.dart';
 
 void main() {
   ConsolePrinter.i('🔍 Running pre-commit checks...');
@@ -100,7 +99,6 @@ extension type const ConsolePrinter._(Stdout out) {
 extension type const ErrorConsolePrinter._(Stdout out) implements ConsolePrinter {
   factory ErrorConsolePrinter() => ErrorConsolePrinter._(stderr);
 
-  @redeclare
   void call(String message) {
     out.writeln('❌ $message');
   }
@@ -109,7 +107,6 @@ extension type const ErrorConsolePrinter._(Stdout out) implements ConsolePrinter
 extension type const InfoConsolePrinter._(Stdout out) implements ConsolePrinter {
   factory InfoConsolePrinter() => InfoConsolePrinter._(stdout);
 
-  @redeclare
   void call(String message) {
     out.writeln(message);
   }
@@ -118,7 +115,6 @@ extension type const InfoConsolePrinter._(Stdout out) implements ConsolePrinter 
 extension type const WarningConsolePrinter._(Stdout out) implements ConsolePrinter {
   factory WarningConsolePrinter() => WarningConsolePrinter._(stdout);
 
-  @redeclare
   void call(String message) {
     out.writeln('⚠️ $message');
   }
