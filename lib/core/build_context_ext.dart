@@ -1,12 +1,27 @@
+import 'package:control/control.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:starter_template/core/di.dart';
-import 'package:starter_template/core/localizations/app_localizations.dart';
+import 'package:starter_template/core/localizations/intl_wrapper.dart';
+import 'package:starter_template/core/localizations/localization_wrapper.dart';
 import 'package:starter_template/core/widget/app_navigator.dart';
 import 'package:starter_template/core/widget/inherited_scope.dart';
 
+/// Расширения контекста
 extension BuildContextExt on BuildContext {
+  /// Возвращает обертку для контекста приложения.
   ApplicationContextWrapper get app => ApplicationContextWrapper(this);
+
+  ApplicationNavigationWrapper get nav => app.nav;
+
+  /// Возвращает обертку для локализации приложения.
+  ApplicationLocalizationWrapper get lcl => app.lcl;
+
+  /// Подписывает виджет на изменения контроллера.
+  C watchOf<C extends Listenable>() => ControllerScope.of<C>(this, listen: true);
+
+  /// Возвращает контейнер с зависимостями где [T] унаследован от [DependencyContainer].
+  T getDepend<T extends DependencyContainer>() => getScoped<T>();
 }
 
 extension type ApplicationContextWrapper(BuildContext _c) {
@@ -22,30 +37,19 @@ extension type ApplicationContextWrapper(BuildContext _c) {
   /// Возвращает локализации для виджетов Cupertino.
   CupertinoLocalizations get cupertinoLocalization => CupertinoLocalizations.of(_c);
 
-  /// Список поддерживаемых локалей.
-  List<Locale> get supportedLocales => AppLocalizations.supportedLocales;
-
-  /// Список делегатов локализации.
-  List<LocalizationsDelegate> get localizationsDelegates => AppLocalizations.localizationsDelegates;
-
   /// Возвращает обертку для навигации в приложении.
   ApplicationNavigationWrapper get nav => ApplicationNavigationWrapper(_c);
 
-  /// Возвращает контейнер с зависимостями где [T] унаследован от [DependencyContainer].
-  T getDepend<T extends DependencyContainer>() => _c.getScoped<T>();
+  /// Возвращает обёртку с методами форматирования
+  IntlHelperContextWrapper get intl => IntlHelperContextWrapper(_c);
 
-  /// Возвращает экземпляр зависимости типа [T] из текущего контекста.
-  T getScoped<T>() => _c.getScoped<T>();
-}
-
-extension type ApplicationLocalizationWrapper._(AppLocalizations _context) implements AppLocalizations {
-  /// Создает обертку для локализации приложения на основе контекста.
+  /// Возвращает [true] если открыта клавиатура.
   ///
-  /// Выбрасывает исключение, если в дереве виджетов отсутствует [AppLocalizations].
-  factory ApplicationLocalizationWrapper(BuildContext context) {
-    final delegate = AppLocalizations.of(context);
-    assert(delegate != null, 'Do not have AppLocalizations into elements tree');
-    return ApplicationLocalizationWrapper._(delegate!);
+  /// **Внимание: при вложенных Scaffold -> Scaffold метод не будет работать**
+  bool get keyboardIsVisible {
+    final bottomIndents = MediaQuery.viewInsetsOf(_c).bottom;
+
+    return bottomIndents > 0;
   }
 }
 

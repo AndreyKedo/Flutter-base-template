@@ -4,6 +4,7 @@ typedef ModelFactory<Model> = Model Function(BuildContext context);
 
 extension InheritedScopeContextExtension on BuildContext {
   T getScoped<T>() => InheritedScope.of<T>(this);
+  T getWatchScoped<T>() => InheritedScope.watchOf(this);
 }
 
 class InheritedScope<Model> extends InheritedWidget {
@@ -25,7 +26,7 @@ class InheritedScope<Model> extends InheritedWidget {
   /// );
   /// ```
   InheritedScope({
-    required Model Function(BuildContext context) create,
+    required ModelFactory<Model> create,
     ValueSetter<Model>? dispose,
     Widget? child,
     bool lazy = true,
@@ -40,24 +41,41 @@ class InheritedScope<Model> extends InheritedWidget {
 
   final _ScopedModel<Model> _dependency;
 
+  static M? rawMaybeOf<M, S extends InheritedScope<M>>(BuildContext context, {bool listen = false}) {
+    final element = context.getElementForInheritedWidgetOfExactType<S>();
+    if (element != null && listen) {
+      context.dependOnInheritedElement(element);
+    }
+    return element is InheritedScopeElement<M> ? element.storage : null;
+  }
+
+  static M rawOf<M, S extends InheritedScope<M>>(BuildContext context, {bool listen = false}) =>
+      rawMaybeOf<M, S>(context, listen: listen) ?? _notFoundInheritedWidgetOfExactType();
+
   /// Состояние ближайшего экземпляра этого класса,
   /// охватывающего заданный контекст, если таковой имеется.
   /// Например, `InheritedScope.maybeOf<Model>(context)`.
-  static S? maybeOf<S>(BuildContext context) {
+  static S? maybeOf<S>(BuildContext context, {bool listen = false}) {
     final element = context.getElementForInheritedWidgetOfExactType<InheritedScope<S>>();
+    if (element != null && listen) {
+      context.dependOnInheritedElement(element);
+    }
     return element is InheritedScopeElement<S> ? element.storage : null;
   }
 
   static Never _notFoundInheritedWidgetOfExactType() => throw ArgumentError(
     'Out of scope, not found inherited widget '
-        'a InheritedScope of the exact type',
+        'a InheritedScope<$Type> of the exact type',
     'out_of_scope',
   );
 
   /// Состояние ближайшего экземпляра этого класса,
   /// охватывающего заданный контекст.
   /// Например, `InheritedScope.of<Model>(context)`.
-  static C of<C>(BuildContext context) => maybeOf<C>(context) ?? _notFoundInheritedWidgetOfExactType();
+  static C of<C>(BuildContext context, {bool listen = false}) =>
+      maybeOf<C>(context, listen: listen) ?? _notFoundInheritedWidgetOfExactType();
+
+  static C watchOf<C>(BuildContext context) => of<C>(context, listen: true);
 
   @override
   bool updateShouldNotify(covariant InheritedScope oldWidget) => false;
@@ -114,12 +132,14 @@ final class InheritedScopeElement<Model> extends InheritedElement {
           assert(oldDependency is _ScopedModelCreate<Model>, 'Cannot change scope type');
           if (_model == null && !d.lazy) {
             _model = d.create(this);
+            _emitUpdate();
           }
         case final _ScopedModelValue<Model> d:
           assert(oldDependency is _ScopedModelValue<Model>, 'Cannot change scope type');
           final newStorage = d.model;
           if (!identical(_model, newStorage)) {
             _model = newStorage;
+            _emitUpdate();
           }
       }
     }
@@ -146,6 +166,11 @@ final class InheritedScopeElement<Model> extends InheritedElement {
     super.unmount();
   }
 
+  void _emitUpdate() {
+    _dirty = true;
+    markNeedsBuild();
+  }
+
   @override
   Widget build() {
     if (_dirty) notifyClients(widget as InheritedScope<Model>);
@@ -161,7 +186,7 @@ sealed class _ScopedModel<Model> {
 final class _ScopedModelCreate<Model> extends _ScopedModel<Model> {
   const _ScopedModelCreate({required this.create, required this.dispose, required this.lazy});
 
-  final Model Function(BuildContext context) create;
+  final ModelFactory<Model> create;
   final ValueSetter<Model>? dispose;
 
   final bool lazy;

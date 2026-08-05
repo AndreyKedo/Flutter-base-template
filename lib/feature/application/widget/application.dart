@@ -1,19 +1,24 @@
+import 'package:control/control.dart';
 import 'package:flutter/material.dart';
-import 'package:starter_template/core/utils/build_context_ext.dart';
-import 'package:starter_template/core/widget/inherited_scope.dart';
-import 'package:starter_template/feature/application/di/application_di.dart';
+import 'package:starter_template/core/actions/clipboard_action.dart';
+import 'package:starter_template/core/actions/launch_url_action.dart';
+import 'package:starter_template/core/build_context_ext.dart';
+import 'package:starter_template/core/entity/types.dart';
+import 'package:starter_template/feature/application/controller/initialization_controller.dart';
 import 'package:starter_template/feature/application/widget/app_entry.dart';
+import 'package:starter_template/feature/application/widget/initialization_coordinator.dart';
 import 'package:starter_template/feature/development/screen/development_screen.dart';
 
-class Application extends StatelessWidget {
-  const Application({super.key});
+class ApplicationWidget extends StatelessWidget {
+  const ApplicationWidget({required this.create, super.key});
+
+  final ControllerCreateCallback<InitializationController> create;
 
   @override
   Widget build(BuildContext context) {
-    return InheritedScope<ApplicationDi>(
-      create: (_) {
-        return ApplicationDiContainer.create();
-      },
+    return ControllerScope<InitializationController>(
+      create,
+      lazy: false,
       child: _RootNavigatorWrapper(
         builder: (context, params) => MaterialApp(
           navigatorKey: params.key,
@@ -35,12 +40,20 @@ class Application extends StatelessWidget {
             ),
             useMaterial3: true,
           ),
-          localizationsDelegates: context.app.localizationsDelegates,
-          supportedLocales: context.app.supportedLocales,
+          localizationsDelegates: context.lcl.localizationsDelegates,
+          supportedLocales: context.lcl.supportedLocales,
+          actions: {
+            ...WidgetsApp.defaultActions,
+            LaunchUrlIntent: LaunchUrlAction(),
+            ClipboardIntent: ClipBoardAction(),
+          },
           builder: (context, child) {
+            const splash = Placeholder();
             return Stack(
               children: [
-                Positioned.fill(child: child ?? const SizedBox.shrink()),
+                Positioned.fill(
+                  child: InitializationCoordinator(splashScreen: splash, child: child!),
+                ),
                 Positioned(
                   top: MediaQuery.viewPaddingOf(context).top,
                   right: 16,

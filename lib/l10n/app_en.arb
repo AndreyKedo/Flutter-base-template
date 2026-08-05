@@ -4,5 +4,28 @@
   "@appName":{
     "description": "Application title",
     "type": "text"
+  },
+    "timeoutError": "Превышено время ожидания ответа от сервера.",
+  "@timeoutError": {
+    "description": "Сообщение об ошибке таймаута",
+    "type": "text"
+  },
+  "socketError": "Не удалось установить соединение. Проверьте подключение к сети интернет.",
+  "@socketError": {
+    "description": "Ошибка говорит о наличие проблем во время установления соединения"
+  },
+    "unknownError": "Произошла неизвестная ошибка.",
+  "@unknownError": {
+    "description": "Сообщение об неизвестной ошибке",
+    "type": "text"
+  },
+  "validationError": "Ошибка валидации данных.",
+  "@validationError": {
+    "description": "Сообщение об ошибке валидации",
+    "type": "text"
+  },
+  "stateError": "Некорректное внутренние состояние программы.",
+  "@stateError": {
+    "description": "Сообщение об некорректном внутреннем состояние программы"
   }
 }

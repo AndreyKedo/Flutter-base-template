@@ -97,6 +97,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'FlutterBase'**
   String get appName;
+
+  /// Сообщение об ошибке таймаута
+  ///
+  /// In en, this message translates to:
+  /// **'Превышено время ожидания ответа от сервера.'**
+  String get timeoutError;
+
+  /// Ошибка говорит о наличие проблем во время установления соединения
+  ///
+  /// In en, this message translates to:
+  /// **'Не удалось установить соединение. Проверьте подключение к сети интернет.'**
+  String get socketError;
+
+  /// Сообщение об неизвестной ошибке
+  ///
+  /// In en, this message translates to:
+  /// **'Произошла неизвестная ошибка.'**
+  String get unknownError;
+
+  /// Сообщение об ошибке валидации
+  ///
+  /// In en, this message translates to:
+  /// **'Ошибка валидации данных.'**
+  String get validationError;
+
+  /// Сообщение об некорректном внутреннем состояние программы
+  ///
+  /// In en, this message translates to:
+  /// **'Некорректное внутренние состояние программы.'**
+  String get stateError;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

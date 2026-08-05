@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'dart:collection';
 import 'dart:developer' as dev;
 import 'dart:async';
@@ -5,7 +7,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 
-extension type AppLogger._(Logger _logger) {
+extension type const AppLogger._(Logger _logger) {
   factory AppLogger.named(String name) => AppLogger._(Logger(name));
 
   /// Позволяет получить залогированные события.
@@ -15,11 +17,18 @@ extension type AppLogger._(Logger _logger) {
   static final r = AppLogger._(Logger.root);
   static StreamSubscription? _loggerSub;
 
-  static void enableLogger() {
+  static void enableLogger({Level level = Level.ALL, Set<String> excludeLogger = const {}}) {
     final logger = r._logger;
-    logger.level = Level.ALL;
-    _loggerSub = logger.onRecord.listen((record) {
+    logger.level = level;
+    print('Logger level ${logger.level}');
+    _loggerSub ??= logger.onRecord.where((record) => !excludeLogger.contains(record.loggerName)).listen((record) {
       collector.addRecord(record);
+      AppLogger.printToConsole(record);
+    });
+  }
+
+  static void printToConsole(LogRecord record) {
+    if (kDebugMode) {
       dev.log(
         record.message,
         time: record.time,
@@ -30,8 +39,19 @@ extension type AppLogger._(Logger _logger) {
         error: record.error,
         stackTrace: record.stackTrace,
       );
-    });
+      return;
+    }
+    final sequenceNumber = record.sequenceNumber;
+    print('#$sequenceNumber $record');
+    if (record.error != null) {
+      print('#$sequenceNumber ${record.error}');
+    }
+    if (record.stackTrace != null) {
+      print('#$sequenceNumber ${record.stackTrace}');
+    }
   }
+
+  String get name => _logger.name;
 
   /// Pause log sequence
   static void pause() => _loggerSub?.pause();
@@ -41,11 +61,13 @@ extension type AppLogger._(Logger _logger) {
 
   set logLevel(Level value) => _logger.level = value;
 
+  void config(Object? message) => _logger.config(message);
+
   /// Info
   void i(Object? message, [Object? error, StackTrace? stackTrace]) => _logger.info(message, error, stackTrace);
 
-  /// Debug
-  void d(Object? message, [Object? error, StackTrace? stackTrace]) => _logger.shout(message, error, stackTrace);
+  /// Debug (FINE level)
+  void d(Object? message, [Object? error, StackTrace? stackTrace]) => _logger.fine(message, error, stackTrace);
 
   /// Error
   void e(Object? message, [Object? error, StackTrace? stackTrace]) => _logger.severe(message, error, stackTrace);

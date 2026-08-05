@@ -4,7 +4,7 @@ description: Flutter template project
 version: 0.0.1+1
 
 environment:
-  sdk: ^3.9.2
+  sdk: ^3.11.4
 
 dependencies:
   
@@ -17,15 +17,24 @@ dependencies:
   intl: any
   meta: any
 
+  #State management
+  control: ^0.2.0
+
   #Utils
   logging: ^1.3.0
   async: ^2.13.0
   collection: ^1.19.1
+  path: ^1.9.1
 
   #Network
   http_middleware_client: ^1.0.0+2
   http: ^1.5.0
 
+  #Platform
+  package_info_plus: ^10.1.0
+  device_info_plus: ^13.1.0
+  unique_device_identifier: ^2.0.4
+  url_launcher: ^6.3.2
  
 dev_dependencies:
   flutter_test:

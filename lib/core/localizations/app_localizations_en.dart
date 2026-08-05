@@ -10,4 +10,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get appName => 'FlutterBase';
+
+  @override
+  String get timeoutError => 'Превышено время ожидания ответа от сервера.';
+
+  @override
+  String get socketError => 'Не удалось установить соединение. Проверьте подключение к сети интернет.';
+
+  @override
+  String get unknownError => 'Произошла неизвестная ошибка.';
+
+  @override
+  String get validationError => 'Ошибка валидации данных.';
+
+  @override
+  String get stateError => 'Некорректное внутренние состояние программы.';
 }

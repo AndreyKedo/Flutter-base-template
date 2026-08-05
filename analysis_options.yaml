@@ -36,6 +36,8 @@ analyzer:
     avoid_print: warning
     unused_import: warning
     avoid_dynamic_calls: error
+    # Only for control package
+    experimental_member_use: ignore
 
 linter:
   rules:
@@ -60,7 +62,6 @@ linter:
     - use_rethrow_when_possible
     - use_named_constants
     - use_is_even_rather_than_modulo
-    - use_if_null_to_convert_nulls_to_bools
     - use_function_type_syntax_for_parameters
     - use_full_hex_values_for_flutter_colors
     - unrelated_type_equality_checks
