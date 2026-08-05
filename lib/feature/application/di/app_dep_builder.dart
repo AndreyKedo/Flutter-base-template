@@ -1,5 +1,7 @@
+import 'package:control/control.dart';
 import 'package:flutter/services.dart';
 import 'package:starter_template/core/di.dart';
+import 'package:starter_template/core/entity/inline_controller_observer.dart';
 import 'package:starter_template/core/environment.dart';
 import 'package:starter_template/core/logger.dart';
 import 'package:starter_template/core/network/http_overrides.dart';
@@ -24,18 +26,18 @@ class AppDependencyBuilder extends DependencyBuilder<ApplicationDependency, AppD
               }
 
               // Логирование событий для [StateController]
-              // final stateControllerLogger = AppLogger.named('StateManager');
-              // Controller.observer = InlineControllerObserver(
-              //   didCreate: (controller) {
-              //     stateControllerLogger.d('$controller.onCreate');
-              //   },
-              //   didDispose: (controller) {
-              //     stateControllerLogger.d('$controller.onDispose');
-              //   },
-              //   didError: (controller, exception, stackTrace) {
-              //     stateControllerLogger.e('$controller.onError', exception, stackTrace);
-              //   },
-              // );
+              final stateControllerLogger = AppLogger.named('StateManager');
+              Controller.observer = InlineControllerObserver(
+                didCreate: (controller) {
+                  stateControllerLogger.d('$controller.onCreate');
+                },
+                didDispose: (controller) {
+                  stateControllerLogger.d('$controller.onDispose');
+                },
+                didError: (controller, exception, stackTrace) {
+                  stateControllerLogger.e('$controller.onError', exception, stackTrace);
+                },
+              );
             },
           ),
           (
