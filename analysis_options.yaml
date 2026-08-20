@@ -2,14 +2,20 @@ include: package:flutter_lints/flutter.yaml
 
 formatter: 
   page_width: 120
+  trailing_commas: preserve
 
 analyzer:
   exclude:
+    - "./.dart_tool/**"
     - "build/**"
-    - "**/*.freezed.dart"
     - "**/*.g.dart"
     - "**/*.gen.dart"
-    - "test/**"
+    - android/**
+    - ios/**
+    - web/**
+    - windows/**
+    - macos/**
+    - linux/**
 
   errors:
     collection_methods_unrelated_type: error
@@ -35,8 +41,6 @@ analyzer:
     sized_box_for_whitespace: warning
     avoid_print: warning
     unused_import: warning
-    avoid_dynamic_calls: error
-    # Only for control package
     experimental_member_use: ignore
 
 linter:
@@ -69,6 +73,9 @@ linter:
     - unnecessary_string_interpolations
     - unnecessary_string_escapes
     - unnecessary_new
+    - unnecessary_primary_constructor_body
+    - unnecessary_const_in_enum_constructor
+    - use_declaring_parameters
     - unnecessary_nullable_for_final_variable_declarations
     - unnecessary_null_in_if_null_operators
     - unnecessary_null_aware_assignments
@@ -84,11 +91,9 @@ linter:
     - avoid_init_to_null
     - cancel_subscriptions
     - unnecessary_brace_in_string_interps
-    - unnecessary_await_in_return
     - unawaited_futures
     - type_init_formals
     - omit_local_variable_types
-    - one_member_abstracts
     - prefer_generic_function_type_aliases
     - prefer_collection_literals
     - prefer_iterable_whereType
@@ -97,7 +102,8 @@ linter:
     - depend_on_referenced_packages
     - exhaustive_cases
     - file_names
-    - avoid_dynamic_calls
+    - empty_container_bodies
+    - initialize_in_field_declaration
     # Flutter
     - avoid_web_libraries_in_flutter
     - avoid_unnecessary_containers

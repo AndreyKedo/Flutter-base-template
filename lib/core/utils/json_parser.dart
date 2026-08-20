@@ -14,10 +14,8 @@ final _jsonCodec = JsonCodec.withReviver((Object? key, Object? value) {
 /// {@template json_codec}
 /// Кодек для кодирования объекта типа [Map] или [List] в JSON строку и декодирования обратно.
 /// {@endtemplate}
-class JsonAppCodec extends Codec<Object, String> {
+class const JsonAppCodec() extends Codec<Object, String> {
   /// {@macro json_codec}
-  const JsonAppCodec();
-
   @override
   Converter<String, Object> get decoder => const _JsonDecoder();
 
@@ -25,16 +23,12 @@ class JsonAppCodec extends Codec<Object, String> {
   Converter<Object, String> get encoder => const _JsonEncoder();
 }
 
-final class _JsonDecoder extends Converter<String, Object> {
-  const _JsonDecoder();
-
+final class const _JsonDecoder() extends Converter<String, Object> {
   @override
   Object convert(String input) => _jsonCodec.decode(input) as Object;
 }
 
-final class _JsonEncoder extends Converter<Object, String> {
-  const _JsonEncoder();
-
+final class const _JsonEncoder() extends Converter<Object, String> {
   @override
   String convert(Object input) {
     if (input is List || input is Map) {

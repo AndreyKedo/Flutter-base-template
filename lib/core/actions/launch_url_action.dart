@@ -9,13 +9,13 @@ import 'package:url_launcher/url_launcher.dart';
 /// {@endtemplate}
 class LaunchUrlIntent extends Intent {
   /// {@macro launch_url_action.intent}
-  const LaunchUrlIntent(this.url) : mode = LaunchMode.platformDefault;
+  const new(this.url) : mode = LaunchMode.platformDefault;
 
   /// {@macro launch_url_action.intent}
   ///
   /// Намерение которое уведомляет систему о том, что ссылка должны быть обработана
   /// с помощью внешнего приложения.
-  const LaunchUrlIntent.externalMode(this.url) : mode = LaunchMode.externalApplication;
+  const new externalMode(this.url) : mode = LaunchMode.externalApplication;
 
   final Uri url;
 

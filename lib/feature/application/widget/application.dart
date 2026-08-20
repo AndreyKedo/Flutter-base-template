@@ -1,5 +1,5 @@
 import 'package:control/control.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:starter_template/core/actions/clipboard_action.dart';
 import 'package:starter_template/core/actions/launch_url_action.dart';
 import 'package:starter_template/core/build_context_ext.dart';
@@ -9,11 +9,8 @@ import 'package:starter_template/feature/application/widget/app_entry.dart';
 import 'package:starter_template/feature/application/widget/initialization_coordinator.dart';
 import 'package:starter_template/feature/development/screen/development_screen.dart';
 
-class ApplicationWidget extends StatelessWidget {
-  const ApplicationWidget({required this.create, super.key});
-
-  final ControllerCreateCallback<InitializationController> create;
-
+class const ApplicationWidget({required final ControllerCreateCallback<InitializationController> create, super.key})
+    extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ControllerScope<InitializationController>(
@@ -82,20 +79,13 @@ class ApplicationWidget extends StatelessWidget {
   }
 }
 
-class _NavigatorParams {
-  _NavigatorParams({required this.key, required this.observer});
-
-  final GlobalKey<NavigatorState> key;
-  final _RootObserver observer;
-
+class _NavigatorParams({required final GlobalKey<NavigatorState> key, required final _RootObserver observer}) {
   BuildContext get context => key.currentContext!;
 }
 
-final class _RootNavigatorWrapper extends StatefulWidget {
-  const _RootNavigatorWrapper({required this.builder});
-
-  final Widget Function(BuildContext context, _NavigatorParams params) builder;
-
+final class const _RootNavigatorWrapper({
+  required final Widget Function(BuildContext context, _NavigatorParams params) builder,
+}) extends StatefulWidget {
   @override
   State<_RootNavigatorWrapper> createState() => __RootNavigatorWrapperState();
 }
@@ -118,9 +108,7 @@ class __RootNavigatorWrapperState extends State<_RootNavigatorWrapper> {
   Widget build(BuildContext context) => widget.builder(context, _NavigatorParams(key: navKey, observer: observer));
 }
 
-class _RootObserver extends NavigatorObserver with ChangeNotifier {
-  _RootObserver();
-
+class _RootObserver() extends NavigatorObserver with ChangeNotifier {
   bool _showDebug = true;
   bool get showDebugButton => _showDebug;
 

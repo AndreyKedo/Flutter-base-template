@@ -1,8 +1,6 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
-final class AppEntry extends StatelessWidget {
-  const AppEntry({super.key});
-
+final class const AppEntry({super.key}) extends StatelessWidget {
   @override
-  Widget build(BuildContext context) => Scaffold(body: Center(child: Text('Hello')));
+  Widget build(BuildContext context) => const Scaffold(body: Center(child: Text('Hello')));
 }

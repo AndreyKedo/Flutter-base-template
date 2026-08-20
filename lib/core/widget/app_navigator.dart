@@ -1,7 +1,7 @@
 import 'dart:collection';
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 typedef AppNavigationState = List<AppPage>;
 
@@ -13,17 +13,19 @@ typedef AppNavigatorGuardCallback = AppNavigationState Function(BuildContext con
 ///
 /// Расширяет [MaterialPage] с дополнительной логикой для работы с [AppNavigator].
 @immutable
-class AppPage extends MaterialPage<void> {
+// The generated key prevents this constructor from being const.
+// ignore: prefer_const_constructors_in_immutables
+class AppPage({
+  required String super.name,
+  required super.child,
+  LocalKey? key,
+  super.canPop,
+  Map<String, Object?>? super.arguments,
+}) extends MaterialPage<void> {
   /// Создает страницу с указанным именем и дочерним виджетом.
   ///
   /// Если [key] не предоставлен, будет создан автоматически на основе [name].
-  AppPage({
-    required String super.name,
-    required super.child,
-    LocalKey? key,
-    super.canPop,
-    Map<String, Object?>? super.arguments,
-  }) : super(key: key ?? ValueKey('$name-page-key'));
+  this : super(key: key ?? ValueKey('$name-page-key'));
 
   @override
   String get name => super.name ?? 'Unknown';
@@ -49,7 +51,7 @@ class AppNavigator extends StatefulWidget {
   /// Создает виджет навигатора с начальным списком страниц.
   ///
   /// Параметр [pages] не может быть пустым.
-  AppNavigator({
+  new({
     required this.pages,
     this.guards = const [],
     this.observers = const [],
@@ -63,7 +65,7 @@ class AppNavigator extends StatefulWidget {
   /// Создает виджет навигатора с контроллером.
   ///
   /// Параметр [controller] не может содержать пустое значение.
-  AppNavigator.controlled({
+  new controlled({
     required ValueNotifier<AppNavigationState> this.controller,
     this.guards = const [],
     this.observers = const [],

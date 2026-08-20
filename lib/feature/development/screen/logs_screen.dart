@@ -1,11 +1,9 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:starter_template/core/logger.dart';
 
-final class LogsScreen extends StatelessWidget {
-  const LogsScreen({super.key});
-
+final class const LogsScreen({super.key}) extends StatelessWidget {
   static void push(BuildContext context) {
     final page = MaterialPageRoute(builder: (context) => const LogsScreen());
     Navigator.of(context).push(page);

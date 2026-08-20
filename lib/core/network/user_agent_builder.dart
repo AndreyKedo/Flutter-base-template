@@ -14,10 +14,8 @@
 ///
 /// Результат: "MyApp/1.0.0 (iPhone10,1; iOS 15.0)"
 /// {@endtemplate}
-class UserAgentBuilder {
+class UserAgentBuilder() {
   /// {@macro user_agent_builder}
-  UserAgentBuilder();
-
   String? _appName;
   String? _version;
   String? _deviceModel;

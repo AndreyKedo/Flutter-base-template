@@ -11,9 +11,7 @@ import 'package:starter_template/core/logger.dart';
 import 'package:starter_template/core/network/app_http_client.dart';
 import 'package:starter_template/core/utils/json_parser.dart';
 
-sealed class AppHttpException extends ClientException with LocalizableException {
-  AppHttpException(super.message, [super.uri]);
-}
+sealed class AppHttpException(super.message, [super.uri]) extends ClientException with LocalizableException;
 
 /// Mixin для предоставления кода статуса HTTP ответа.
 mixin StatusCodeMixin {
@@ -22,57 +20,47 @@ mixin StatusCodeMixin {
 }
 
 /// Исключение для ошибок HTTP.
-abstract class AppHttpExceptionStatusCode extends AppHttpException with StatusCodeMixin {
-  AppHttpExceptionStatusCode(this.statusCode, super.message, [super.uri]);
+abstract class AppHttpExceptionStatusCode(@override final int statusCode, super.message, [super.uri])
+    extends AppHttpException
+    with StatusCodeMixin;
 
-  @override
-  final int statusCode;
+class ServerException(int statusCode, [Uri? url]) extends AppHttpExceptionStatusCode {
+  this : super(statusCode, 'Server exception; Request to $url failed with status $statusCode.', url);
 }
 
-class ServerException extends AppHttpExceptionStatusCode {
-  ServerException(int statusCode, [Uri? url])
-    : super(statusCode, 'Server exception; Request to $url failed with status $statusCode.', url);
-}
-
-class ApiException extends AppHttpExceptionStatusCode {
-  ApiException(int statusCode, [Uri? url])
-    : super(statusCode, 'Client exception; Request failed with status $statusCode.', url);
+class ApiException(int statusCode, [Uri? url]) extends AppHttpExceptionStatusCode {
+  this : super(statusCode, 'Client exception; Request failed with status $statusCode.', url);
 }
 
 /// Исключение для ошибок соединения по сокету
-class SocketConnectionException extends AppHttpException {
-  SocketConnectionException([Uri? url]) : super('Socket connection failed.', url);
+class SocketConnectionException([Uri? url]) extends AppHttpException {
+  this : super('Socket connection failed.', url);
 }
 
 /// Исключение для ошибок соединения по сокету
-class SocketTlsException extends AppHttpException {
-  SocketTlsException([Uri? url]) : super('Socket connection failed.', url);
+class SocketTlsException([Uri? url]) extends AppHttpException {
+  this : super('Socket connection failed.', url);
 }
 
 /// Исключение для ошибок соединения по сокету
-class ConnectionTimeoutException extends AppHttpException {
-  ConnectionTimeoutException(Uri url) : super('Request timeout for $url');
+class ConnectionTimeoutException(Uri url) extends AppHttpException {
+  this : super('Request timeout for $url');
 }
 
 /// {@template rest_api}
 /// Абстрактный класс, который предоставляет точку входа в API, HTTP методы для выполнения запросов к API.
 /// {@endtemplate}
-abstract class RestApi {
+abstract class RestApi({
+  required final AppHttpClient client,
+  required final Uri baseUri,
+  final String debugName = 'RestApi',
+  final Map<String, String> headers = const {
+    HttpHeaders.acceptHeader: 'application/json; charset=utf-8',
+    HttpHeaders.contentTypeHeader: 'application/json; charset=utf-8',
+  },
+}) {
   /// {@macro rest_api}
-  RestApi({
-    required this.client,
-    required this.baseUri,
-    this.debugName = 'RestApi',
-    this.headers = const {
-      HttpHeaders.acceptHeader: 'application/json; charset=utf-8',
-      HttpHeaders.contentTypeHeader: 'application/json; charset=utf-8',
-    },
-  }) : assert(baseUri.isScheme('https') || baseUri.isScheme('http'), 'Базовый URI должен быть http или https');
-
-  final AppHttpClient client;
-  final Uri baseUri;
-  final Map<String, String> headers;
-  final String debugName;
+  this : assert(baseUri.isScheme('https') || baseUri.isScheme('http'), 'Базовый URI должен быть http или https');
 
   late final log = AppLogger.named(debugName);
 

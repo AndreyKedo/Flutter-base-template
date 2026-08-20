@@ -6,10 +6,10 @@ import 'package:starter_template/feature/application/di/app_dep_container.dart';
 part 'initialization_state.dart';
 
 /// Контроллер отвечает за инициализацию приложения и его зависимостей.
-final class InitializationController extends StateController<InitializationState> with DroppableControllerHandler {
-  InitializationController(this.dependencyBuilder) : super(initialState: const InitializationInitialState());
-
-  final DependencyBuilder<ApplicationDependency, AppDependencyContext> dependencyBuilder;
+final class InitializationController(
+  final DependencyBuilder<ApplicationDependency, AppDependencyContext> dependencyBuilder,
+) extends StateController<InitializationState> with DroppableControllerHandler {
+  this : super(initialState: const InitializationInitialState());
 
   Future<void> initialize() => handle(
     () async {

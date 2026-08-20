@@ -15,10 +15,10 @@ extension type ImageAssetValue(String path) implements AssetValue {
   AssetImage get provider => _assetMemoizer[path] ??= AssetImage(path);
 }
 
-extension type AppResource._(AssetValue _value) implements AssetValue {}
+extension type AppResource._(AssetValue _value) implements AssetValue;
 
 /// Растровые иконки
-extension type AppIcons._(ImageAssetValue _value) implements ImageAssetValue {}
+extension type AppIcons._(ImageAssetValue _value) implements ImageAssetValue;
 
 /// Растровые изображения
 extension type AppImages._(ImageAssetValue _value) implements ImageAssetValue {

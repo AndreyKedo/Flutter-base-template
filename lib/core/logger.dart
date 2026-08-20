@@ -8,7 +8,7 @@ import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 
 extension type const AppLogger._(Logger _logger) {
-  factory AppLogger.named(String name) => AppLogger._(Logger(name));
+  factory named(String name) => AppLogger._(Logger(name));
 
   /// Позволяет получить залогированные события.
   static final collector = LogCollector._();
@@ -77,15 +77,13 @@ extension type const AppLogger._(Logger _logger) {
 }
 
 abstract final class LogCollector implements ValueListenable<UnmodifiableListView<LogRecord>> {
-  factory LogCollector._() => _LogCollectorImpl._();
+  factory _() => _LogCollectorImpl._();
 
   @protected
   void addRecord(LogRecord value);
 }
 
-final class _LogCollectorImpl extends ChangeNotifier implements LogCollector {
-  _LogCollectorImpl._();
-
+final class _LogCollectorImpl._() extends ChangeNotifier implements LogCollector {
   final _list = <LogRecord>[];
 
   @override

@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Обертка для [DateFormat] с поддержкой локализации.
 extension type const DateFormats(DateFormat _format) implements DateFormat {

@@ -11,8 +11,8 @@ import 'package:starter_template/core/services/platform_info/platform_info_provi
 import 'package:starter_template/feature/application/di/app_dep_container.dart';
 
 /// Строит зависимостей приложения из списка шагов.
-class AppDependencyBuilder extends DependencyBuilder<ApplicationDependency, AppDependencyContext> {
-  AppDependencyBuilder()
+class AppDependencyBuilder() extends DependencyBuilder<ApplicationDependency, AppDependencyContext> {
+  this
     : super(
         steps: [
           (
@@ -89,13 +89,9 @@ class AppDependencyContext implements DependencyBuilderContext {
 }
 
 /// Контейнер с глобальными зависимостями для всех модулей.
-class _ApplicationContainer implements ApplicationDependency {
-  _ApplicationContainer({required this.appInfoProvider});
-
+class _ApplicationContainer({@override required final PlatformInfoProvider appInfoProvider})
+    implements ApplicationDependency {
   // MARK: Instances
-
-  @override
-  final PlatformInfoProvider appInfoProvider;
 
   @override
   void dispose() {}

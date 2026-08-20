@@ -13,9 +13,7 @@ enum Flavor {
   };
 }
 
-abstract base class Environment {
-  const Environment();
-
+abstract base class const Environment() {
   static Environment get current => const DartDefineEnvironment();
 
   Uri get host;
@@ -30,9 +28,7 @@ abstract base class Environment {
   String get databaseName;
 }
 
-final class DartDefineEnvironment extends Environment {
-  const DartDefineEnvironment();
-
+final class const DartDefineEnvironment() extends Environment {
   @override
   Uri get host => Uri.parse(const String.fromEnvironment('HOST'));
 

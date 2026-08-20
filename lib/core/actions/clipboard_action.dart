@@ -1,11 +1,7 @@
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
-class ClipboardIntent extends Intent {
-  const ClipboardIntent(this.data);
-
-  final String data;
-}
+class const ClipboardIntent(final String data) extends Intent;
 
 class ClipBoardAction extends Action<ClipboardIntent> {
   @override

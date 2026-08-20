@@ -17,12 +17,8 @@ abstract interface class ExceptionVisitor {
   }
 }
 
-class ExceptionLocalizer implements ExceptionVisitor {
-  ExceptionLocalizer(this._c, {this.fallbackLocalizer});
-
-  final BuildContext _c;
-  final ExceptionFallbackLocalizer? fallbackLocalizer;
-
+class ExceptionLocalizer(final BuildContext _c, {final ExceptionFallbackLocalizer? fallbackLocalizer})
+    implements ExceptionVisitor {
   String localize(Object exception) {
     if (exception is LocalizableException) {
       return exception.localize(this);

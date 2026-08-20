@@ -25,7 +25,7 @@ class InheritedScope<Model> extends InheritedWidget {
   ///   dispose: (Model object) => object.dispose(),
   /// );
   /// ```
-  InheritedScope({
+  new({
     required ModelFactory<Model> create,
     ValueSetter<Model>? dispose,
     Widget? child,
@@ -35,7 +35,7 @@ class InheritedScope<Model> extends InheritedWidget {
        super(child: child ?? const SizedBox.shrink());
 
   /// Provide already created object.
-  InheritedScope.value({required Model value, Widget? child, super.key})
+  new value({required Model value, Widget? child, super.key})
     : _dependency = _ScopedModelValue<Model>(value),
       super(child: child ?? const SizedBox.shrink());
 
@@ -84,9 +84,7 @@ class InheritedScope<Model> extends InheritedWidget {
   InheritedElement createElement() => InheritedScopeElement<Model>(this);
 }
 
-final class InheritedScopeElement<Model> extends InheritedElement {
-  InheritedScopeElement(InheritedScope<Model> super.widget);
-
+final class InheritedScopeElement<Model>(InheritedScope<Model> super.widget) extends InheritedElement {
   _ScopedModel<Model> get _dependency => (widget as InheritedScope<Model>)._dependency;
 
   Model? _model;
@@ -178,19 +176,14 @@ final class InheritedScopeElement<Model> extends InheritedElement {
   }
 }
 
-sealed class _ScopedModel<Model> {
-  const _ScopedModel();
-}
+sealed class const _ScopedModel<Model>();
 
 @immutable
-final class _ScopedModelCreate<Model> extends _ScopedModel<Model> {
-  const _ScopedModelCreate({required this.create, required this.dispose, required this.lazy});
-
-  final ModelFactory<Model> create;
-  final ValueSetter<Model>? dispose;
-
-  final bool lazy;
-
+final class const _ScopedModelCreate<Model>({
+  required final ModelFactory<Model> create,
+  required final ValueSetter<Model>? dispose,
+  required final bool lazy,
+}) extends _ScopedModel<Model> {
   @override
   int get hashCode => create.hashCode;
 
@@ -200,11 +193,7 @@ final class _ScopedModelCreate<Model> extends _ScopedModel<Model> {
 }
 
 @immutable
-final class _ScopedModelValue<Model> extends _ScopedModel<Model> {
-  const _ScopedModelValue(this.model);
-
-  final Model model;
-
+final class const _ScopedModelValue<Model>(final Model model) extends _ScopedModel<Model> {
   @override
   int get hashCode => model.hashCode;
 

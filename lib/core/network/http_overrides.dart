@@ -4,20 +4,17 @@ import 'package:flutter/foundation.dart';
 import 'package:starter_template/core/environment.dart';
 
 /// Переопределение поведения HTTP для приложения
-class AppHttpOverrides extends HttpOverrides {
-  AppHttpOverrides(this.userAgentResolver, {this.systemProxyEnvironment});
-
+class AppHttpOverrides(
+  final ValueGetter<String> userAgentResolver, {
+  final Map<String, String>? systemProxyEnvironment,
+}) extends HttpOverrides {
   /// Применить переопределения.
-  factory AppHttpOverrides.ensure({
+  factory ensure({
     required ValueGetter<String> userAgentResolver,
     Map<String, String>? systemProxyEnvironment,
   }) => HttpOverrides.global = AppHttpOverrides(userAgentResolver, systemProxyEnvironment: systemProxyEnvironment);
 
   static AppHttpOverrides get instance => HttpOverrides.current as AppHttpOverrides;
-
-  final ValueGetter<String> userAgentResolver;
-
-  final Map<String, String>? systemProxyEnvironment;
 
   late final userAgent = userAgentResolver();
 

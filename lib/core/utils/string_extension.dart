@@ -6,6 +6,8 @@ extension AppNullStringExtension on String? {
     };
   }
 
+  bool get isNotBlank => !isBlank;
+
   String? capitalize() {
     final self = this;
     if (self == null) return null;

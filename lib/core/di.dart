@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/widgets.dart';
 import 'package:starter_template/core/widget/inherited_scope.dart';
 
 /// Обратный вызова шага инициализации зависимости.
@@ -17,19 +17,13 @@ typedef DependencyStep<Context extends DependencyBuilderContext> = ({
 });
 
 /// Контекст зависимостей.
-abstract class DependencyBuilderContext {
-  const DependencyBuilderContext();
-
-  const factory DependencyBuilderContext.empty() = _EmptyContext;
+abstract class const DependencyBuilderContext() {
+  const factory empty() = _EmptyContext;
 }
 
-final class _EmptyContext extends DependencyBuilderContext {
-  const _EmptyContext();
-}
+final class const _EmptyContext() extends DependencyBuilderContext;
 
-abstract class DependencyContainer {
-  const DependencyContainer();
-
+abstract class const DependencyContainer() {
   static InheritedScope<D> wrap<D extends DependencyContainer>({
     required ModelFactory<D> create,
     required Widget child,
@@ -43,19 +37,13 @@ abstract class DependencyContainer {
 /// Реализует алгоритм прохода по [DependencyBuilder.steps], вызывает конструктор [DependencyBuilder.create]
 /// который возвращает контейнер с проинициализированными зависимостями. В каждом шаге доступен [Context], который
 /// может являться контрактом между шагами и конечным результатом - контейнером. [Context] может содержать любую логику.
-abstract class DependencyBuilder<DC extends DependencyContainer, Context extends DependencyBuilderContext> {
-  DependencyBuilder({required this.create, required this.context, this.steps = const []});
-
+abstract class DependencyBuilder<DC extends DependencyContainer, Context extends DependencyBuilderContext>({
+  required final DependencyBuilderFactory<Context, DC> create,
+  required final Context context,
+  final Iterable<DependencyStep<Context>> steps = const [],
+}) {
   /// Шаги инициализации. Список может быть пустым, тогда в этом случае
   /// строитель перейдёт к [create].
-  final Iterable<DependencyStep<Context>> steps;
-
-  /// Фабричная функция для контейнера зависимостей.
-  final DependencyBuilderFactory<Context, DC> create;
-
-  /// Объект контекста.
-  final Context context;
-
   /// Метод который выполняет логику обработки шагов и строит контейнер с зависимостями.
   FutureOr<DC> build() async {
     if (steps.isNotEmpty) {
@@ -76,8 +64,7 @@ abstract class DependencyBuilder<DC extends DependencyContainer, Context extends
     }
 
     try {
-      final result = create(context);
-      if (result is Future) await result;
+      final result = await create(context);
 
       return result;
     } catch (e, stackTrace) {
@@ -86,13 +73,11 @@ abstract class DependencyBuilder<DC extends DependencyContainer, Context extends
   }
 }
 
-class DependencyBuilderException {
-  DependencyBuilderException({required this.original, this.stepIndex, this.stepName});
-
-  final int? stepIndex;
-  final String? stepName;
-  final Object original;
-
+class DependencyBuilderException({
+  required final Object original,
+  final int? stepIndex,
+  final String? stepName,
+}) {
   @override
   String toString() {
     var label = '';

@@ -1,9 +1,7 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:starter_template/feature/development/screen/logs_screen.dart';
 
-final class DevelopmentScreen extends StatelessWidget {
-  const DevelopmentScreen({super.key});
-
+final class const DevelopmentScreen({super.key}) extends StatelessWidget {
   static const routeSettings = RouteSettings(name: 'development_screen');
   static void push(BuildContext context) {
     final page = MaterialPageRoute(settings: routeSettings, builder: (context) => const DevelopmentScreen());

@@ -1,6 +1,5 @@
 import 'package:control/control.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:starter_template/core/di.dart';
 import 'package:starter_template/core/localizations/intl_wrapper.dart';
 import 'package:starter_template/core/localizations/localization_wrapper.dart';
@@ -33,9 +32,6 @@ extension type ApplicationContextWrapper(BuildContext _c) {
 
   /// Возвращает локализации для виджетов Material.
   MaterialLocalizations get materialLocalization => MaterialLocalizations.of(_c);
-
-  /// Возвращает локализации для виджетов Cupertino.
-  CupertinoLocalizations get cupertinoLocalization => CupertinoLocalizations.of(_c);
 
   /// Возвращает обертку для навигации в приложении.
   ApplicationNavigationWrapper get nav => ApplicationNavigationWrapper(_c);

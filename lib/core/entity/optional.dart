@@ -1,15 +1,10 @@
 /// Обёртка для опционального типа.
 ///
 /// Позволяет реализовать трёхзначную логику присвоения.
-class Optional<T> {
+class const Optional<T>(final T? value) {
   ///
-  const Optional(this.value);
-
-  /// Значение опционального типа
-  final T? value;
-
   /// Создаёт nullable опциональный тип
-  factory Optional.toNull() => const Optional(null);
+  factory toNull() => const Optional(null);
 
   /// Возвращает обёртку типа исходя из значения.
   static Optional<T>? from<T>(T? value) {

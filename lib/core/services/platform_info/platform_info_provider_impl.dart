@@ -4,9 +4,8 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:starter_template/core/services/platform_info/platform_info_provider.dart';
 import 'package:unique_device_identifier/unique_device_identifier.dart';
 
-class PlatformInfoProviderImpl implements PlatformInfoProvider {
-  PlatformInfoProviderImpl({required this.package, required this.device});
-
+class PlatformInfoProviderImpl({@override required final Package package, @override required final Device device})
+    implements PlatformInfoProvider {
   static Future<PlatformInfoProvider> ensureInfo() async {
     final packageInfo = await PackageInfo.fromPlatform();
     final deviceInfo = await DeviceInfoPlugin().deviceInfo;
@@ -41,10 +40,4 @@ class PlatformInfoProviderImpl implements PlatformInfoProvider {
       ),
     );
   }
-
-  @override
-  final Package package;
-
-  @override
-  final Device device;
 }

@@ -1,3 +1,11 @@
+## 1.3.0
+
+* Migrate to Flutter 3.47
+
+⚠ **Breaking changes**:
+
+* Up SDK to ^3.13.0
+
 ## 1.2.0
 
 * Refactoring structure

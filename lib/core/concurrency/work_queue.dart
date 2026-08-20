@@ -6,12 +6,8 @@ import 'package:flutter/foundation.dart' show visibleForTesting;
 
 typedef RunnableCallback<T> = Future<T> Function();
 
-abstract class WorkQueueBase {
-  final _QueueProxy<_TaskBase<Object?>> _queue;
-
+abstract class WorkQueueBase(final QueueProxy<TaskBase<Object?>> _queue) {
   Future<void>? _current;
-
-  WorkQueueBase(this._queue);
 
   Future<R> schedule<R>(RunnableCallback<R> callback);
 
@@ -41,12 +37,8 @@ abstract class WorkQueueBase {
   }
 }
 
-abstract class _TaskBase<T> {
-  final RunnableCallback<T> function;
-
+abstract class TaskBase<T>({required final RunnableCallback<T> function}) {
   final _completer = Completer<T>();
-
-  _TaskBase({required this.function});
 
   Future<T> get future => _completer.future;
 
@@ -62,10 +54,9 @@ abstract class _TaskBase<T> {
   }
 }
 
-final class PriorityWorkQueue extends WorkQueueBase {
+final class PriorityWorkQueue() extends WorkQueueBase {
+  this : super(_PriorityQueueProxy());
   static final main = PriorityWorkQueue();
-
-  PriorityWorkQueue() : super(_PriorityQueueProxy());
 
   @override
   Future<R> schedule<R>(RunnableCallback<R> callback, {WorkPriority priority = WorkPriority.low}) {
@@ -76,32 +67,26 @@ final class PriorityWorkQueue extends WorkQueueBase {
   }
 }
 
-class _PriorityTask<T> extends _TaskBase<T> implements Comparable<_PriorityTask> {
-  final WorkPriority priority;
-
-  _PriorityTask({required this.priority, required super.function});
-
+class _PriorityTask<T>({required final WorkPriority priority, required super.function})
+    extends TaskBase<T>
+    implements Comparable<_PriorityTask> {
   @override
   int compareTo(_PriorityTask other) => priority.compareTo(other.priority);
 }
 
-enum WorkPriority implements Comparable<WorkPriority> {
+enum WorkPriority(final int value) implements Comparable<WorkPriority> {
   hight(3),
   middle(2),
   low(1);
-
-  const WorkPriority(this.value);
-
-  final int value;
 
   @override
   int compareTo(WorkPriority other) => index.compareTo(other.index);
 }
 
-class WorkQueue extends WorkQueueBase {
-  static final main = WorkQueue();
+class WorkQueue() extends WorkQueueBase {
+  this : super(_SequentialWorkQueue());
 
-  WorkQueue() : super(_SequentialWorkQueue());
+  static final main = WorkQueue();
 
   @override
   Future<void>? get active => _current;
@@ -115,11 +100,9 @@ class WorkQueue extends WorkQueueBase {
   }
 }
 
-class WorkQueueTask<T> extends _TaskBase<T> {
-  WorkQueueTask({required super.function});
-}
+class WorkQueueTask<T>({required super.function}) extends TaskBase<T>;
 
-abstract interface class _QueueProxy<T> {
+abstract interface class QueueProxy<T> {
   bool get isEmpty;
 
   void add(T task);
@@ -129,11 +112,9 @@ abstract interface class _QueueProxy<T> {
   void clear();
 }
 
-class _PriorityQueueProxy<T extends _TaskBase> extends HeapPriorityQueue<T> implements _QueueProxy<T> {
-  _PriorityQueueProxy([super.comparison]);
-}
+class _PriorityQueueProxy<T extends TaskBase>([super.comparison]) extends HeapPriorityQueue<T> implements QueueProxy<T>;
 
-class _SequentialWorkQueue<T extends _TaskBase> implements _QueueProxy<T> {
+class _SequentialWorkQueue<T extends TaskBase> implements QueueProxy<T> {
   late final _queue = Queue<T>();
 
   @override

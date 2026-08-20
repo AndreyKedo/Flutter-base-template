@@ -3,23 +3,19 @@ import 'package:flutter/foundation.dart';
 
 typedef HandleControllerErrorCallback = void Function(Controller controller, Object error, StackTrace stackTrace);
 
-class InlineControllerObserver implements IControllerObserver {
-  InlineControllerObserver({
-    ValueSetter<Controller>? didCreate,
-    ValueSetter<Controller>? didDispose,
-    HandleControllerErrorCallback? didError,
-  }) : onCreateCallback = didCreate,
-       onDisposeCallback = didDispose,
-       onErrorCallback = didError;
+class InlineControllerObserver({
+  ValueSetter<Controller>? didCreate,
+  ValueSetter<Controller>? didDispose,
+  HandleControllerErrorCallback? didError,
+}) implements IControllerObserver {
+  @protected
+  final ValueSetter<Controller>? onCreateCallback = didCreate;
 
   @protected
-  final ValueSetter<Controller>? onCreateCallback;
+  final ValueSetter<Controller>? onDisposeCallback = didDispose;
 
   @protected
-  final ValueSetter<Controller>? onDisposeCallback;
-
-  @protected
-  final HandleControllerErrorCallback? onErrorCallback;
+  final HandleControllerErrorCallback? onErrorCallback = didError;
 
   @override
   void onCreate(Controller controller) {

@@ -2,22 +2,22 @@ import 'package:meta/meta.dart';
 
 /// [Date] расширение типа [DateTime] для работы с датой без времени.
 extension type const Date._(DateTime _date) implements DateTime {
-  Date(int year, int month, int day) : _date = DateTime(year, month, day);
+  new(int year, int month, int day) : _date = DateTime(year, month, day);
 
   static final today = Date.now();
 
   /// Текущая дата
-  factory Date.now() => Date.of(DateTime.now());
+  factory now() => Date.of(DateTime.now());
 
   /// Создать [Date] из [DateTime].
-  factory Date.of(DateTime date) {
+  factory of(DateTime date) {
     // Если дата уже в UTC повторного преобразования не будет.
     final DateTime(:year, :month, :day) = date;
     return Date(year, month, day);
   }
 
   /// Создаёт [Date] из компактного формата в виде целого числа.
-  Date.value(int value)
+  new value(int value)
     : _date = DateTime(
         value >> 9, // year (12 bit)
         (value >> 5) & 0xf, // month (4 bit)

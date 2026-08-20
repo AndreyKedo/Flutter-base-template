@@ -7,25 +7,12 @@ abstract class PlatformInfoProvider {
 }
 
 /// Хранит информацию о пакете приложения.
-class Package {
-  const Package({
-    required this.appName,
-    required this.packageName,
-    required this.version,
-    required this.buildNumber,
-  });
-
-  final String appName;
-
-  /// Имя пакета.
-  final String packageName;
-
-  /// Версия приложения.
-  final String version;
-
-  /// Номер сборки.
-  final String buildNumber;
-
+class const Package({
+  required final String appName,
+  required final String packageName,
+  required final String version,
+  required final String buildNumber,
+}) {
   @override
   String toString() {
     return 'Package(\n'
@@ -38,22 +25,12 @@ class Package {
 }
 
 /// Базовый класс для метаданных устройства. Используется для унификации доступа.
-class Device {
-  Device({
-    required this.model,
-    required this.os,
-    required this.osVersion,
-    required this.uniqueIdentifier,
-  });
-
-  final String uniqueIdentifier;
-
-  final String model;
-
-  final String os;
-
-  final String osVersion;
-
+class Device({
+  required final String model,
+  required final String os,
+  required final String osVersion,
+  required final String uniqueIdentifier,
+}) {
   @override
   String toString() {
     return 'Device(\n'

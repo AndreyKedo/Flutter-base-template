@@ -2,16 +2,16 @@ import 'package:starter_template/core/entity/date.dart';
 
 /// Диапазон дат.
 extension type DateRange._(({Date begin, Date end}) instance) {
-  DateRange({required Date begin, required Date end}) : instance = (begin: begin, end: end);
+  new({required Date begin, required Date end}) : instance = (begin: begin, end: end);
 
   /// Диапазон дат, который содержит текущую дату. Сегодня + Завтра
-  factory DateRange.today() {
+  factory today() {
     final today = Date.today;
     return DateRange(begin: today, end: today.add(const Duration(days: 1)));
   }
 
   /// Диапазон дат текущей недели
-  factory DateRange.week() {
+  factory week() {
     final today = Date.today;
     return DateRange(
       begin: today.subtract(Duration(days: today.weekday - 1)),
@@ -20,7 +20,7 @@ extension type DateRange._(({Date begin, Date end}) instance) {
   }
 
   /// Диапазон дат месяца. По умолчанию возвращает для текущего.
-  factory DateRange.month([int? month]) {
+  factory month([int? month]) {
     final today = Date.today.copyWith(month: month);
 
     return DateRange(
@@ -32,7 +32,7 @@ extension type DateRange._(({Date begin, Date end}) instance) {
   }
 
   /// Диапазон дат текущего года
-  factory DateRange.year() {
+  factory year() {
     final today = Date.today;
     return DateRange(begin: Date(today.year, 1, 1), end: Date(today.year, 12, 31));
   }
