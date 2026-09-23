@@ -2,6 +2,16 @@
 
 Flexible base flutter application project structure.
 
+### Documentation and AI guidance
+
+- [AGENTS.md](AGENTS.md) — AI working rules, verification and routing to guides and local skills.
+- [Architecture](docs/architecture/overview.md) — template structure, initialization, DI and navigation.
+- [Dart conventions](docs/DEVELOPMENT.md) — syntax, value semantics and collection ownership.
+- [Data access](docs/development/data-access.md), [controllers](docs/development/controllers.md), [UI and localization](docs/development/ui-localization.md), and [testing](docs/development/testing.md) — guidance for the affected layer.
+- [Feature changes](.agents/skills/flutter-feature-change/SKILL.md) and [localized messages](.agents/skills/flutter-localization/SKILL.md) — local AI workflows.
+
+Guides distinguish requirements for new work from the current scaffold. Commands run from the repository root unless stated otherwise; Markdown links are relative to their containing file.
+
 ### How run
 
 1. Clone this repository via `git clone`.

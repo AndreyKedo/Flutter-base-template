@@ -27,5 +27,28 @@
   "stateError": "Некорректное внутренние состояние программы.",
   "@stateError": {
     "description": "Сообщение об некорректном внутреннем состояние программы"
+  },
+    "serverError": "Server error. Please try again later.",
+  "@serverError": {
+    "description": "Сообщение об ошибке сервера",
+    "type": "text"
+  },
+  "authenticationError": "Authentication failed. Please sign in again.",
+  "@authenticationError": {
+    "description": "Сообщение об ошибке аутентификации",
+    "type": "text"
+  },
+  "apiError": "Request failed (code: {statusCode}).",
+  "@apiError": {
+    "description": "Сообщение об ошибке API с параметром кода статуса",
+    "type": "text",
+    "placeholders": {
+      "statusCode": {}
+    }
+  },
+  "socketConnectionError": "This action requires an internet connection. Check your connection and try again.",
+  "@socketConnectionError": {
+    "description": "Сообщение об ошибке отсутствия интернет соединения",
+    "type": "text"
   }
 }

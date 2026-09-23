@@ -26,4 +26,19 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get stateError => 'Некорректное внутренние состояние программы.';
+
+  @override
+  String get serverError => 'Server error. Please try again later.';
+
+  @override
+  String get authenticationError => 'Authentication failed. Please sign in again.';
+
+  @override
+  String apiError(Object statusCode) {
+    return 'Request failed (code: $statusCode).';
+  }
+
+  @override
+  String get socketConnectionError =>
+      'This action requires an internet connection. Check your connection and try again.';
 }

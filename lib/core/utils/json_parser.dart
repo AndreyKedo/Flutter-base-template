@@ -7,7 +7,7 @@ const appJsonCodec = JsonAppCodec();
 
 final _jsonCodec = JsonCodec.withReviver((Object? key, Object? value) {
   if (value is List<dynamic>) return List<Object>.from(value, growable: false);
-  if (value is Map<String, dynamic>) return Map<String, Object?>.from(value);
+  if (value is Map<String, dynamic>) return Map<String, Object?>.unmodifiable(value);
   return value;
 });
 
@@ -40,6 +40,14 @@ final class const _JsonEncoder() extends Converter<Object, String> {
 }
 
 extension JsonAppCodecExtension on Object {
+  /// Конвертирует объект в Map\<String, Object?>.
+  ///
+  /// **Примечание:**
+  /// Если объект не является Map, то будет выброшено исключение.
+  Map<String, Object?> toMapUnSafe() => Map.from(this as Map);
+}
+
+extension NullableJsonAppCodecExtension on Object? {
   /// Конвертирует объект в Map\<String, Object?>.
   ///
   /// **Примечание:**

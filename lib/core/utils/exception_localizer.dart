@@ -5,16 +5,12 @@ import 'package:flutter/widgets.dart';
 import 'package:starter_template/core/build_context_ext.dart';
 import 'package:starter_template/core/entity/localizable_exception.dart';
 import 'package:starter_template/core/environment.dart';
+import 'package:starter_template/core/network/rest_api.dart';
 
 typedef ExceptionFallbackLocalizer = String? Function(Object exception);
 
 abstract interface class ExceptionVisitor {
   String visit(Object exception);
-
-  @override
-  Object? noSuchMethod(Invocation invocation) {
-    return super.noSuchMethod(invocation);
-  }
 }
 
 class ExceptionLocalizer(final BuildContext _c, {final ExceptionFallbackLocalizer? fallbackLocalizer})
@@ -36,9 +32,22 @@ class ExceptionLocalizer(final BuildContext _c, {final ExceptionFallbackLocalize
     final localizations = _c.lcl;
 
     switch (exception) {
+      case ServerException():
+        return localizations.serverError;
+      case ApiException(:final statusCode):
+        if (statusCode == HttpStatus.unauthorized) {
+          return localizations.authenticationError;
+        }
+        return localizations.apiError(statusCode);
+      case SocketConnectionException():
+        return localizations.socketConnectionError;
+      case SocketTlsException():
+        return localizations.unknownError;
+      case ConnectionTimeoutException():
+        return localizations.timeoutError;
       case TimeoutException():
         return localizations.timeoutError;
-      case FormatException() || ArgumentError():
+      case FormatException() || ArgumentError() || TypeError():
         return localizations.validationError;
       case IOException():
         if (Flavor.current == .staging) {
@@ -59,5 +68,6 @@ class ExceptionLocalizer(final BuildContext _c, {final ExceptionFallbackLocalize
 mixin LocalizableExceptionMixin {
   Object get exception;
 
-  String localize(BuildContext context) => ExceptionLocalizer(context).localize(exception);
+  String localize(BuildContext context, {ExceptionFallbackLocalizer? fallbackLocalizer}) =>
+      ExceptionLocalizer(context, fallbackLocalizer: fallbackLocalizer).localize(exception);
 }

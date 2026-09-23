@@ -127,6 +127,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Некорректное внутренние состояние программы.'**
   String get stateError;
+
+  /// Сообщение об ошибке сервера
+  ///
+  /// In en, this message translates to:
+  /// **'Ошибка сервера. Пожалуйста, попробуйте позже.'**
+  String get serverError;
+
+  /// Сообщение об ошибке аутентификации
+  ///
+  /// In en, this message translates to:
+  /// **'Ошибка аутентификации. Пожалуйста, войдите снова.'**
+  String get authenticationError;
+
+  /// Сообщение об ошибке API с параметром кода статуса
+  ///
+  /// In en, this message translates to:
+  /// **'Ошибка при выполнении запроса (код: {statusCode}).'**
+  String apiError(Object statusCode);
+
+  /// Сообщение об ошибке отсутствия интернет соединения
+  ///
+  /// In en, this message translates to:
+  /// **'Для этого действия требуется интернет соединение. Включите или проверьте текущие.'**
+  String get socketConnectionError;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

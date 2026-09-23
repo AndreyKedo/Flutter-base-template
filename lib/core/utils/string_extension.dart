@@ -11,9 +11,7 @@ extension AppNullStringExtension on String? {
   String? capitalize() {
     final self = this;
     if (self == null) return null;
-    if (self.isEmpty) return this;
-    final firstChar = self.substring(0, 1).toUpperCase();
-    return self.replaceRange(0, 1, firstChar);
+    return self.capitalize();
   }
 }
 

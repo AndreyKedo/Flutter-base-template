@@ -23,6 +23,8 @@ abstract class const DependencyBuilderContext() {
 
 final class const _EmptyContext() extends DependencyBuilderContext;
 
+typedef CreateChildDependency<P extends DependencyContainer, D extends DependencyContainer> = D Function(P parent);
+
 abstract class const DependencyContainer() {
   static InheritedScope<D> wrap<D extends DependencyContainer>({
     required ModelFactory<D> create,
@@ -30,6 +32,11 @@ abstract class const DependencyContainer() {
   }) => InheritedScope<D>(create: create, dispose: (value) => value.dispose(), child: child);
 
   void dispose() {}
+}
+
+extension ChildDependencyFactory<P extends DependencyContainer> on P {
+  /// Create child dependency container
+  D createChild<D extends DependencyContainer>(CreateChildDependency<P, D> factory) => factory(this);
 }
 
 /// Построитель зависимостей.

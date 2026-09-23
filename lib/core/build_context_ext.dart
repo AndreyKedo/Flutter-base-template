@@ -3,15 +3,12 @@ import 'package:material_ui/material_ui.dart';
 import 'package:starter_template/core/di.dart';
 import 'package:starter_template/core/localizations/intl_wrapper.dart';
 import 'package:starter_template/core/localizations/localization_wrapper.dart';
-import 'package:starter_template/core/widget/app_navigator.dart';
 import 'package:starter_template/core/widget/inherited_scope.dart';
 
 /// Расширения контекста
 extension BuildContextExt on BuildContext {
   /// Возвращает обертку для контекста приложения.
   ApplicationContextWrapper get app => ApplicationContextWrapper(this);
-
-  ApplicationNavigationWrapper get nav => app.nav;
 
   /// Возвращает обертку для локализации приложения.
   ApplicationLocalizationWrapper get lcl => app.lcl;
@@ -33,9 +30,6 @@ extension type ApplicationContextWrapper(BuildContext _c) {
   /// Возвращает локализации для виджетов Material.
   MaterialLocalizations get materialLocalization => MaterialLocalizations.of(_c);
 
-  /// Возвращает обертку для навигации в приложении.
-  ApplicationNavigationWrapper get nav => ApplicationNavigationWrapper(_c);
-
   /// Возвращает обёртку с методами форматирования
   IntlHelperContextWrapper get intl => IntlHelperContextWrapper(_c);
 
@@ -47,12 +41,4 @@ extension type ApplicationContextWrapper(BuildContext _c) {
 
     return bottomIndents > 0;
   }
-}
-
-extension type ApplicationNavigationWrapper(BuildContext context) {
-  /// Переход на новый экран [page].
-  void push(AppPage page) => AppNavigator.push(context, page);
-
-  /// Возврат на предыдущий экран.
-  void pop() => AppNavigator.pop(context);
 }

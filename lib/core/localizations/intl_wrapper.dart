@@ -12,12 +12,18 @@ extension type const DateFormats(DateFormat _format) implements DateFormat {
   /// `dd.MM.yyyy`
   static final dMMy = DateFormats(DateFormat('dd.MM.yyyy'));
 
+  /// `dd.MM`
+  static final dMM = DateFormats(DateFormat('dd.MM'));
+
   /// Возвращает новый объект [DateFormats] с [locale].
   DateFormats applyLocale(Locale locale) => DateFormats(DateFormat(_format.pattern, locale.toString()));
 }
 
 extension type IntlHelperContextWrapper(BuildContext _c) {
-  String formatBy(DateFormats format, DateTime value) => format.format(value);
+  String formatBy(DateFormats format, DateTime value) {
+    final locale = Localizations.localeOf(_c);
+    return format.applyLocale(locale).format(value);
+  }
 
   DateTime parseStrict(DateFormats format, String value) => format.parseStrict(value);
 
@@ -38,21 +44,5 @@ extension type IntlHelperContextWrapper(BuildContext _c) {
   String dMMy(DateTime value) {
     final matLocalize = MaterialLocalizations.of(_c);
     return matLocalize.formatCompactDate(value);
-  }
-
-  String currencyFormat(Object value) {
-    final locale = Localizations.localeOf(_c);
-    final formatter = NumberFormat.currency(locale: locale.toString(), symbol: '₽', decimalDigits: 2);
-    return formatter.format(
-      switch (value) {
-        String str => num.parse(str),
-        num number => number,
-        _ => throw ArgumentError.value(
-          value,
-          'CurrencyFormat::value'
-          'value must be a string or a number',
-        ),
-      },
-    );
   }
 }

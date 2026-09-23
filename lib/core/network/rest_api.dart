@@ -19,13 +19,16 @@ mixin StatusCodeMixin {
   int get statusCode;
 }
 
+/// Mixin ошибки сетевого характера.
+mixin ConnectionException;
+
 /// Исключение для ошибок HTTP.
 abstract class AppHttpExceptionStatusCode(@override final int statusCode, super.message, [super.uri])
     extends AppHttpException
     with StatusCodeMixin;
 
 class ServerException(int statusCode, [Uri? url]) extends AppHttpExceptionStatusCode {
-  this : super(statusCode, 'Server exception; Request to $url failed with status $statusCode.', url);
+  this : super(statusCode, 'Server exception; Request failed with status $statusCode.', url);
 }
 
 class ApiException(int statusCode, [Uri? url]) extends AppHttpExceptionStatusCode {
@@ -33,17 +36,17 @@ class ApiException(int statusCode, [Uri? url]) extends AppHttpExceptionStatusCod
 }
 
 /// Исключение для ошибок соединения по сокету
-class SocketConnectionException([Uri? url]) extends AppHttpException {
+class SocketConnectionException([Uri? url]) extends AppHttpException with ConnectionException {
   this : super('Socket connection failed.', url);
 }
 
 /// Исключение для ошибок соединения по сокету
-class SocketTlsException([Uri? url]) extends AppHttpException {
+class SocketTlsException([Uri? url]) extends AppHttpException with ConnectionException {
   this : super('Socket connection failed.', url);
 }
 
 /// Исключение для ошибок соединения по сокету
-class ConnectionTimeoutException(Uri url) extends AppHttpException {
+class ConnectionTimeoutException(Uri url) extends AppHttpException with ConnectionException {
   this : super('Request timeout for $url');
 }
 
@@ -60,7 +63,11 @@ abstract class RestApi({
   },
 }) {
   /// {@macro rest_api}
-  this : assert(baseUri.isScheme('https') || baseUri.isScheme('http'), 'Базовый URI должен быть http или https');
+  this
+    : assert(
+        baseUri.isScheme('https') || baseUri.isScheme('http'),
+        'Базовый URI должен быть http или https',
+      );
 
   late final log = AppLogger.named(debugName);
 
@@ -79,9 +86,39 @@ abstract class RestApi({
     return Map.of(headers)..addAll(value);
   }
 
-  Future<Response> get(String path, {Map<String, String>? headers, Map<String, dynamic>? queryParameters}) async {
-    final uri = combineUri(path).replace(queryParameters: queryParameters);
-    final response = await safeRequest(() => client.get(uri, headers: mergeHeaders(headers)), uri);
+  Future<Response> get(
+    String path, {
+    Map<String, String>? headers,
+    Map<String, dynamic>? queryParameters,
+    Future<void>? abortTrigger,
+  }) async {
+    // Формируем URI с параметрами запроса.
+    final requestUri = combineUri(path);
+    final uri = requestUri.replace(queryParameters: queryParameters);
+
+    // Отправляем запрос и полностью считываем ответ с обработкой ошибок.
+    final response = await safeRequest(
+      () async {
+        // Используем стандартный GET, если отмена не требуется.
+        if (abortTrigger == null) {
+          return client.get(uri, headers: mergeHeaders(headers));
+        }
+
+        // Считываем поток внутри safeRequest, включая возможную отмену.
+        final stream = await client.send(
+          abortableRequest(
+            'GET',
+            uri,
+            headers: headers,
+            abortTrigger: abortTrigger,
+          ),
+        );
+        return await Response.fromStream(stream);
+      },
+      uri,
+    );
+
+    // Проверяем статус ответа.
     checkResponseSuccess(uri, response);
     return response;
   }
@@ -92,12 +129,34 @@ abstract class RestApi({
     Map<String, dynamic>? queryParameters,
     Object? body,
     Encoding? encoding,
+    Future<void>? abortTrigger,
   }) async {
     final uri = combineUri(path).replace(queryParameters: queryParameters);
+
+    // Отправляем запрос и полностью считываем ответ с обработкой ошибок.
     final response = await safeRequest(
-      () => client.post(uri, headers: mergeHeaders(headers), body: body, encoding: encoding),
+      () async {
+        // Используем стандартный POST, если отмена не требуется.
+        if (abortTrigger == null) {
+          return client.post(uri, headers: mergeHeaders(headers), body: body, encoding: encoding);
+        }
+
+        // Считываем поток внутри safeRequest, включая возможную отмену.
+        final stream = await client.send(
+          abortableRequest(
+            'POST',
+            uri,
+            headers: headers,
+            body: body,
+            encoding: encoding,
+            abortTrigger: abortTrigger,
+          ),
+        );
+        return await Response.fromStream(stream);
+      },
       uri,
     );
+
     checkResponseSuccess(uri, response);
     return response;
   }
@@ -110,13 +169,16 @@ abstract class RestApi({
     Map<String, dynamic>? queryParameters,
   }) async {
     final uri = combineUri(path).replace(queryParameters: queryParameters);
-    final stream = await safeRequest(() {
-      final request = MultipartRequest('POST', uri)
-        ..headers.addAll(mergeHeaders(headers))
-        ..files.addAll(files)
-        ..fields.addAll(fields);
-      return client.send(request);
-    }, uri);
+    final stream = await safeRequest(
+      () {
+        final request = MultipartRequest('POST', uri)
+          ..headers.addAll(mergeHeaders(headers))
+          ..files.addAll(files)
+          ..fields.addAll(fields);
+        return client.send(request);
+      },
+      uri,
+    );
     final response = await Response.fromStream(stream);
     checkResponseSuccess(uri, response);
     return response;
@@ -130,13 +192,16 @@ abstract class RestApi({
     Map<String, dynamic>? queryParameters,
   }) async {
     final uri = combineUri(path).replace(queryParameters: queryParameters);
-    final stream = await safeRequest(() {
-      final request = MultipartRequest('PATCH', uri)
-        ..headers.addAll(mergeHeaders(headers))
-        ..files.addAll(files)
-        ..fields.addAll(fields);
-      return client.send(request);
-    }, uri);
+    final stream = await safeRequest(
+      () {
+        final request = MultipartRequest('PATCH', uri)
+          ..headers.addAll(mergeHeaders(headers))
+          ..files.addAll(files)
+          ..fields.addAll(fields);
+        return client.send(request);
+      },
+      uri,
+    );
     final response = await Response.fromStream(stream);
     checkResponseSuccess(uri, response);
     return response;
@@ -148,19 +213,74 @@ abstract class RestApi({
     Map<String, dynamic>? queryParameters,
     Object? body,
     Encoding? encoding,
+    Future<void>? abortTrigger,
   }) async {
-    final uri = combineUri(path).replace(queryParameters: queryParameters);
+    // Формируем URI с параметрами запроса.
+    final requestUri = combineUri(path);
+    final uri = requestUri.replace(queryParameters: queryParameters);
+
+    // Отправляем запрос и полностью считываем ответ с обработкой ошибок.
     final response = await safeRequest(
-      () => client.put(uri, headers: mergeHeaders(headers), body: body, encoding: encoding),
+      () async {
+        // Используем стандартный PUT, если отмена не требуется.
+        if (abortTrigger == null) {
+          return client.put(uri, headers: mergeHeaders(headers), body: body, encoding: encoding);
+        }
+
+        // Считываем поток внутри safeRequest, включая возможную отмену.
+        final stream = await client.send(
+          abortableRequest(
+            'PUT',
+            uri,
+            headers: headers,
+            body: body,
+            encoding: encoding,
+            abortTrigger: abortTrigger,
+          ),
+        );
+        return await Response.fromStream(stream);
+      },
       uri,
     );
+
+    // Проверяем статус ответа.
     checkResponseSuccess(uri, response);
     return response;
   }
 
-  Future<Response> delete(String path, {Map<String, String>? headers, Map<String, dynamic>? queryParameters}) async {
-    final uri = combineUri(path).replace(queryParameters: queryParameters);
-    final response = await safeRequest(() => client.delete(uri, headers: mergeHeaders(headers)), uri);
+  Future<Response> delete(
+    String path, {
+    Map<String, String>? headers,
+    Map<String, dynamic>? queryParameters,
+    Future<void>? abortTrigger,
+  }) async {
+    // Формируем URI с параметрами запроса.
+    final requestUri = combineUri(path);
+    final uri = requestUri.replace(queryParameters: queryParameters);
+
+    // Отправляем запрос и полностью считываем ответ с обработкой ошибок.
+    final response = await safeRequest(
+      () async {
+        // Используем стандартный DELETE, если отмена не требуется.
+        if (abortTrigger == null) {
+          return client.delete(uri, headers: mergeHeaders(headers));
+        }
+
+        // Считываем поток внутри safeRequest, включая возможную отмену.
+        final stream = await client.send(
+          abortableRequest(
+            'DELETE',
+            uri,
+            headers: headers,
+            abortTrigger: abortTrigger,
+          ),
+        );
+        return await Response.fromStream(stream);
+      },
+      uri,
+    );
+
+    // Проверяем статус ответа.
     checkResponseSuccess(uri, response);
     return response;
   }
@@ -171,14 +291,73 @@ abstract class RestApi({
     Map<String, dynamic>? queryParameters,
     Object? body,
     Encoding? encoding,
+    Future<void>? abortTrigger,
   }) async {
-    final uri = combineUri(path).replace(queryParameters: queryParameters);
+    // Формируем URI с параметрами запроса.
+    final requestUri = combineUri(path);
+    final uri = requestUri.replace(queryParameters: queryParameters);
+
+    // Отправляем запрос и полностью считываем ответ с обработкой ошибок.
     final response = await safeRequest(
-      () => client.patch(uri, headers: mergeHeaders(headers), body: body, encoding: encoding),
+      () async {
+        // Используем стандартный PATCH, если отмена не требуется.
+        if (abortTrigger == null) {
+          return client.patch(uri, headers: mergeHeaders(headers), body: body, encoding: encoding);
+        }
+
+        // Считываем поток внутри safeRequest, включая возможную отмену.
+        final stream = await client.send(
+          abortableRequest(
+            'PATCH',
+            uri,
+            headers: headers,
+            body: body,
+            encoding: encoding,
+            abortTrigger: abortTrigger,
+          ),
+        );
+        return await Response.fromStream(stream);
+      },
       uri,
     );
+
+    // Проверяем статус ответа.
     checkResponseSuccess(uri, response);
     return response;
+  }
+
+  /// Establish abortable request.
+  ///
+  /// Implementation from [BaseClient].
+  AbortableRequest abortableRequest(
+    String method,
+    Uri uri, {
+    required Future<void> abortTrigger,
+    Map<String, String>? headers,
+    Object? body,
+    Encoding? encoding,
+  }) {
+    // Setup headers
+    final request = AbortableRequest(method, uri, abortTrigger: abortTrigger);
+    final requestHeaders = request.headers;
+    requestHeaders.addAll(mergeHeaders(headers));
+    if (encoding != null) request.encoding = encoding;
+
+    // Fill body
+    switch (body) {
+      case null:
+        break;
+      case String body:
+        request.body = body;
+      case List body:
+        request.bodyBytes = body.cast<int>();
+      case Map body:
+        request.bodyFields = body.cast<String, String>();
+      default:
+        throw ArgumentError.value(body, 'body', 'Unsupported request body');
+    }
+
+    return request;
   }
 
   @protected
@@ -208,6 +387,8 @@ abstract class RestApi({
   Future<T> safeRequest<T extends BaseResponse>(Future<T> Function() request, Uri url) async {
     try {
       return await request();
+    } on RequestAbortedException {
+      rethrow;
     } on SocketException {
       throw SocketConnectionException(url);
     } on TimeoutException {
@@ -218,4 +399,8 @@ abstract class RestApi({
       Error.throwWithStackTrace(GeneralExceptionWrapper(e), s);
     }
   }
+}
+
+extension ResponseExtension on Response {
+  Map<String, Object?> bodyAsJson() => appJsonCodec.decode(body).toMapUnSafe();
 }

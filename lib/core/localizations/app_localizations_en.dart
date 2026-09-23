@@ -26,4 +26,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get stateError => 'Некорректное внутренние состояние программы.';
+
+  @override
+  String get serverError => 'Ошибка сервера. Пожалуйста, попробуйте позже.';
+
+  @override
+  String get authenticationError => 'Ошибка аутентификации. Пожалуйста, войдите снова.';
+
+  @override
+  String apiError(Object statusCode) {
+    return 'Ошибка при выполнении запроса (код: $statusCode).';
+  }
+
+  @override
+  String get socketConnectionError =>
+      'Для этого действия требуется интернет соединение. Включите или проверьте текущие.';
 }

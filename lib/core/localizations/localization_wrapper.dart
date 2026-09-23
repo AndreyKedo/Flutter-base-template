@@ -1,4 +1,5 @@
-import 'package:material_ui/material_ui.dart';
+import 'package:flutter/widgets.dart';
+import 'package:material_ui/material_ui.dart' show GlobalMaterialLocalizations;
 import 'package:starter_template/core/localizations/app_localizations.dart';
 
 extension type ApplicationLocalizationWrapper._(AppLocalizations _context) implements AppLocalizations {
