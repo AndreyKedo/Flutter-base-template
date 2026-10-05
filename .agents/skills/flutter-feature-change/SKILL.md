@@ -13,8 +13,8 @@ Input: requested behavior, target feature and any supplied data contract. Output
 2. Load only the guide for each affected mechanism:
    - Endpoint, mapping, repository or storage: [data access](../../../docs/development/data-access.md).
    - State transitions, retry or filtering: [controllers](../../../docs/development/controllers.md).
-   - Rendering or forms: [UI](../../../docs/development/ui-localization.md).
-   - Message changes: follow the localization workflow linked from that UI guide.
+   - Rendering or forms: [UI](../../../docs/development/ui.md).
+   - Messages or locale-aware formatting: [localization](../../../docs/development/localization.md). For ARB or generated API changes, follow [flutter-localization](../flutter-localization/SKILL.md).
 3. Work from the agreed contract through the affected data/state layers to their consumers. Create only the needed layers, wire the relevant DI lifetime and connect screens to the application's actual navigation. Check initial, loaded and failure behavior at the boundary changed by the task.
 4. Select regression cases using the [testing guide](../../../docs/development/testing.md), then perform applicable [project verification](../../../AGENTS.md#verification). Recommend behavioral tests for the user to run; do not invoke them. Report the resulting behavior and any unresolved failure.
 

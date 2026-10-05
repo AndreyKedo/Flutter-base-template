@@ -1,33 +1,36 @@
-# Controllers, state and filters
+# Controllers and state
 
-Read when changing controllers/state, retry, concurrency or filtering. The main files are in `lib/feature/<feature>/controller/`; state may be included through `part`. Wiring and lifetime are covered by the [architecture](../architecture/overview.md), and data loading by [data access](data-access.md).
+Read when changing controllers, state transitions, asynchronous operations or concurrency. The main files are in `lib/feature/<feature>/controller/`; state may be included through `part`. Wiring and lifetime are covered by the [architecture](../architecture/overview.md), and data loading by [data access](data-access.md).
+
+A controller is a finite state machine implemented with the `control` package. Its `state` must fully describe the current state of the process it manages. Immutable fields may hold dependency references, configuration and immutable entities. The controller must not have secondary mutable state outside `state`: independent flags or other hidden data that track operation status or determine state transitions.
+
+Public asynchronous methods act as events: each method executes its operation through `handle` and publishes state transitions through `setState`. The feature contract determines the states and permitted transitions.
 
 ## Normative requirements
 
-- For a new list, use sealed state with `InitialLoading`, `ErrorLoading`, `Idle`. The loaded list/tree belongs to Idle, not the base state. An initial loading failure without data produces ErrorLoading. This list contract does not describe every state machine in the application.
-- If a repeated operation fails while data is already displayed, retain Idle. Deliver the error message to the UI through the mechanism defined for the feature; do not replace loaded data with an empty error state. The scaffold has no ready-made shared channel for these messages.
-- Prefer `DroppableControllerHandler`; choose another standard handler from `control` when different concurrency semantics are needed. A custom controller handler requires user approval. Droppable skips new calls while an operation is running; it does not queue them.
-- One public method represents one operation; do not combine different operations through behavior flags. Use `fetch` or `initialize` for initial loading. Refresh, update, navigation and continuation have separate methods.
-- Do not store application state or busy flags in ordinary controller fields. Fields for dependencies and lifecycle resources, such as debounce, are distinct from hidden application state. Displaying operations is covered by the [UI guide](ui-localization.md#operations-and-forms).
+- Extend `StateController<S>` from `control`. Define a finite set of immutable state variants and the transitions allowed for each event. State must describe valid combinations of data and operation status; do not impose one universal set of variants on every controller. State value semantics and collection ownership follow the [Dart conventions](../DEVELOPMENT.md#value-types-and-collection-ownership).
+- Immutable controller fields are allowed: `final` references to dependencies, immutable configuration and immutable entities. A repository held through a `final` reference may manage its own mutable data; the restriction concerns hidden state of the controller itself.
+- Do not store secondary mutable controller state outside `state`, including independent busy flags, counters or data that track the managed process or determine its transitions. A `final` reference to a collection or object must not be used to hide such mutable state. Lifecycle resources may be held solely to manage their lifetime and must not encode application state. Internal state and lifecycle fields managed by `control` are the package's responsibility.
+- Each public event method is asynchronous and executes its operation through its own `handle` call. Keep the operation's sequence and state transitions in that method; handle its failure through the handler's `error` callback. Await asynchronous work belonging to the operation so that `handle` tracks its completion and errors.
+- One public method represents one event. Do not route different events through a universal private method with many parameters, callbacks or behavior flags that select their logic. Small helpers for a concrete reusable step are allowed; they must not hide the entire event implementation.
+- Define success and failure transitions explicitly. If a failed repeated operation leaves previously displayed data valid, retain that data in state. Deliver transient error messages through the mechanism defined for the feature; the scaffold has no ready-made shared channel for them. Displaying operation status is covered by the [UI guide](ui.md#operations-and-forms).
+- Choose a standard controller handler from `control` according to the required behavior when another event arrives during an operation. Determine whether the new call is skipped, queued or executed concurrently, and how its result affects state. A custom controller handler requires user approval; do not implement concurrency with mutable controller fields.
 - Do not add an `isDisposed` check solely before `setState`. Lifecycle checks remain relevant for other actions after `await`, callbacks and BuildContext access. Verify `setState` and handler behavior against the installed version of `control`; guarding notifications does not cancel the operation or its side effects.
-- A filter is a separate immutable value; `FilteringController` changes it, and `ListController.update(filter)` receives the complete filter. Normalization and value semantics belong to the [Dart conventions](../DEVELOPMENT.md#value-types-and-collection-ownership).
 
 ## Current implementation and usage
 
-[InitializationController](../../lib/feature/application/controller/initialization_controller.dart) is an existing example of a `StateController` with `DroppableControllerHandler`: `initialize` invokes the dependency builder, publishes the container on success and an error state through the `error` callback. [InitializationState](../../lib/feature/application/controller/initialization_state.dart) is included through `part` and has separate initial/idle/error variants. This is an initialization example, not a ready-made controller for lists, filters or retaining data after a repeated operation fails.
+[InitializationController](../../lib/feature/application/controller/initialization_controller.dart) demonstrates this structure: it extends `StateController`, holds a `final` dependency and uses `DroppableControllerHandler`. Its asynchronous `initialize` method invokes the dependency builder through `handle`, publishes the resulting state through `setState` and handles failure through the `error` callback. [InitializationState](../../lib/feature/application/controller/initialization_state.dart) is included through `part` and defines the states for this operation.
 
 The controller is created and disposed through `ControllerScope` in [ApplicationWidget](../../lib/feature/application/widget/application.dart). The UI can observe it through `context.watchOf<T>()`; the observer for diagnostic events is connected in [AppDependencyBuilder](../../lib/feature/application/di/app_dep_builder.dart).
-
-For a new asynchronous interaction, explicitly determine what should happen if another call arrives before the previous one finishes. Droppable can skip a filter change during loading. If the UI must apply the latest input, align UI/controller coordination with that behavior; do not automatically replace the handler with a universal queue. Debounce and other resources are disposed by their owner.
 
 The `control` version is pinned in [pubspec.lock](../../pubspec.lock). Before using an unfamiliar API or relying on a lifecycle assumption, inspect the local source of the installed version according to the [API verification rules](../DEVELOPMENT.md#verifying-unfamiliar-sdksapis).
 
 ## Current template state / exceptions
 
-Application-specific list/filter controllers and a shared mechanism for one-time UI errors are not yet available. `InitializationCoordinator` displays the splash for both initial and error states; an error state alone does not imply the presence of error UI or a retry button. Do not carry this behavior into a new list as a requirement.
+The template provides an initialization example, not a complete implementation of every controller scenario. `InitializationCoordinator` displays the splash for both initial and error states; an error state alone does not imply the presence of error UI or a retry action. These are properties of the existing initialization flow, not requirements for other state machines.
 
 ## Verification and completion
 
-For affected operations, select scenarios covering initial success/failure, retry, retaining data after a repeated operation fails, another call during a pending request and completion after disposal. For filtering, cover debounce/reset and application of the latest user input; for pagination, cover an explicit request for a single page and cursor advancement.
+First check that `state` fully describes the current state of the managed process and that controller fields contain no independent mutable flags or other hidden state of that process. Immutable dependency references, configuration and immutable entities are valid controller fields. For each affected event, verify its own implementation through `handle`, the permitted starting states, intermediate transitions, success and failure behavior, and the resulting data. Include repeated calls, another event during a pending operation and completion after disposal where relevant.
 
 Verification techniques are described in the [testing guide](testing.md); commands and execution restrictions are defined in [AGENTS.md](../../AGENTS.md#verification).

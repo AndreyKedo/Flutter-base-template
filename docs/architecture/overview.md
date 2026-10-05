@@ -9,6 +9,7 @@ Read when changing feature boundaries, DI, initialization, navigation or a platf
 - Create only the feature parts that are needed: `widget`, `screen`, `util`, `entity`, `navigation`, `dto`, `api`, `datasource`, `mapper`, `di`, `controller`, `repository`, `service`. A directory's presence in another module does not make that layer mandatory. A separate use-case layer is not required.
 - Assemble feature dependencies in the feature's DI container and application-level dependencies in the application container. Define resource ownership and its `dispose`/`close` at the same level. A container does not imply that all its dependencies are singletons.
 - Connect navigation to the existing application graph, keeping it separate from the data layer and services. Use the current routing mechanism for new screens; choosing a different router and changing dependencies is a separate change subject to the [approval boundaries](../../AGENTS.md#safety--boundaries).
+- Selecting and persisting the application language and integrating it with the platform belong to application architecture. Define their ownership and lifetime when required by a task; message and formatting requirements are covered by the [localization guide](../development/localization.md).
 
 ## Current implementation
 
@@ -28,7 +29,7 @@ Read when changing feature boundaries, DI, initialization, navigation or a platf
 
 `ApplicationWidget` uses `MaterialApp`, a root `Navigator` and an observer for the debug button. [AppEntry](../../lib/feature/application/widget/app_entry.dart) is a placeholder entry screen. Debug screens open through `Navigator` and `MaterialPageRoute`, providing an example of the current navigation. The template has no mandatory separate router or prebuilt graph of application features.
 
-Themes and locale delegates are connected in `ApplicationWidget`; requirements for the Material boundary, styling and localized messages are described in the [UI guide](../development/ui-localization.md).
+Themes and locale delegates are connected in `ApplicationWidget`. The Material boundary is defined in [AGENTS.md](../../AGENTS.md#architecture-invariants); styling follows the [UI guide](../development/ui.md), and message and formatting requirements follow the [localization guide](../development/localization.md).
 
 ### Data flow and infrastructure
 

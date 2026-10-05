@@ -44,6 +44,7 @@ The affected contracts and routed requirements are satisfied, applicable verific
 | DI, module boundaries, routing or platform services | [Architecture](docs/architecture/overview.md) |
 | API, DTO, mapper, repository or persistence | [Data access](docs/development/data-access.md) |
 | Controller, state, retry or filters | [Controllers](docs/development/controllers.md) |
-| UI, theme, forms or formatting | [UI and localization](docs/development/ui-localization.md) |
-| Add/change localized messages or their generated API | [flutter-localization](.agents/skills/flutter-localization/SKILL.md) |
+| UI, theme, forms or layout | [UI](docs/development/ui.md) |
+| Localized text, ICU parameters or number/date formatting | [Localization](docs/development/localization.md) |
+| Add/change ARB messages or their generated API | [flutter-localization](.agents/skills/flutter-localization/SKILL.md) |
 | Tests, fakes or widget harnesses | [Testing](docs/development/testing.md) |

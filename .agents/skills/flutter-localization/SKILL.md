@@ -9,7 +9,7 @@ Input: intended message, its dynamic values and affected UI. Output: matching lo
 
 ## Workflow
 
-1. Find the existing message and its consumers. Read the [message contract](../../../docs/development/ui-localization.md#localization-contract) to decide whether to reuse a key or change its parameters. Read [l10n.yaml](../../../l10n.yaml) for the actual input/output paths and inspect the supported locale sources.
+1. Find the existing message and its consumers. Read the [message contract](../../../docs/development/localization.md#localization-contract) to decide whether to reuse a key or change its parameters. Read [l10n.yaml](../../../l10n.yaml) for the actual input/output paths and inspect the supported locale sources.
 2. Edit the relevant source entries in [lib/l10n](../../../lib/l10n/), including parameter metadata and each supported locale. Check the message language and meaning for each locale. Account for the current source and generated diff before generation so unrelated work remains identifiable.
 3. From the repository root, run `flutter gen-l10n`. Generated localization files are outputs: do not edit them manually. If generation fails, correct the reported ARB/configuration mismatch within the task; do not patch generated Dart to hide it.
 4. Inspect the generated signatures and update affected consumers. Check key/parameter parity across locales and review the configured untranslated-message report when produced. Handwritten wrappers in the output directory remain source files, not generator outputs.
