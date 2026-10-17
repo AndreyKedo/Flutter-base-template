@@ -1,23 +1,25 @@
 ---
 name: flutter-feature-change
-description: Add or change a feature in this Flutter template or an application derived from it across domain, data access, state, DI or navigation layers. Use for a new feature or a coordinated change across layers, not an isolated styling or message edit.
+description: Implement a new feature or a coordinated behavior change across domain, data access, state, DI or navigation layers in this Flutter template or a derived application. Do not use for read-only investigation, behavior-preserving file decomposition, or an isolated styling or message edit.
 ---
 
 # Change a Flutter feature
 
-Input: requested behavior, target feature and any supplied data contract. Output: a coherent feature change with its affected contracts and verification results.
+Input: requested behavior, target feature and any supplied data contract. Output: a coherent feature change with affected contracts and evidence of verification.
 
 ## Workflow
 
-1. Identify the domain operation and affected layers. Read the relevant part of the [architecture guide](../../../docs/architecture/overview.md), then inspect the available implementation and its callers. Resolve the public domain contract before adding implementation; a documented convention is not evidence that a helper or feature already exists.
-2. Load only the guide for each affected mechanism:
+1. Read the current `git status` and relevant diff, then inspect the affected implementation and its callers. Identify existing work to preserve, the feature owner and the observable behavior requested. If prior investigation exists, verify its source references against the current checkout; use [flutter-change-discovery](../flutter-change-discovery/SKILL.md) when the task first requires evidence for planning rather than implementation.
+2. Resolve the public domain contract and acceptance scenarios before implementing dependent behavior. Read the relevant [architecture guide](../../../docs/architecture/overview.md); distinguish available infrastructure from conventions for future features. Check for an existing helper, component or service before adding one. Identify changed producers, consumers, resource ownership and navigation boundaries.
+3. Load only the guide for each affected mechanism:
    - Endpoint, mapping, repository or storage: [data access](../../../docs/development/data-access.md).
    - State transitions, retry or filtering: [controllers](../../../docs/development/controllers.md).
    - Rendering or forms: [UI](../../../docs/development/ui.md).
    - Messages or locale-aware formatting: [localization](../../../docs/development/localization.md). For ARB or generated API changes, follow [flutter-localization](../flutter-localization/SKILL.md).
-3. Work from the agreed contract through the affected data/state layers to their consumers. Create only the needed layers, wire the relevant DI lifetime and connect screens to the application's actual navigation. Check initial, loaded and failure behavior at the boundary changed by the task.
-4. Select regression cases using the [testing guide](../../../docs/development/testing.md), then perform applicable [project verification](../../../AGENTS.md#verification). Recommend behavioral tests for the user to run; do not invoke them. Report the resulting behavior and any unresolved failure.
+4. Work through the needed data/state layers to their consumers, wiring the actual DI lifetime and navigation. Check initial, loaded and failure behavior at the changed boundary, plus repeated operations or concurrency where affected. Do not add missing scaffold services merely because a guide describes their intended conventions.
+5. Review the full changed dependency graph, including new files, imports/exports, route entry points, generated consumers and relevant documentation. Search for obsolete references when replacing a symbol or contract. Select regression cases using the [testing guide](../../../docs/development/testing.md) and perform applicable [project verification](../../../AGENTS.md#verification). Recommend behavioral tests for the user to run; do not invoke them.
+6. Report the resulting behavior, affected contracts and checks actually performed. Distinguish static verification from observed runtime behavior, and state remaining unknowns or failures. Review the task diff separately from existing work.
 
 ## Stop conditions
 
-If source and requirements leave an essential domain contract ambiguous, ask for that specific decision before implementing the dependent behavior. For a custom controller handler or a new dependency, follow the approval boundary in the owning guide/root; this Skill does not grant an exception.
+If source and requirements leave an essential domain contract ambiguous, ask for that specific decision before implementing dependent behavior. For a custom controller handler or a new dependency, follow the approval boundary in the owning guide/root; this Skill does not grant an exception.

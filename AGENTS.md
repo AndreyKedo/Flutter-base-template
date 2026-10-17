@@ -20,6 +20,18 @@ Reusable Flutter application scaffold. Shared infrastructure is in `lib/core/`, 
 
 Before changing Dart, read [syntax and structure](docs/DEVELOPMENT.md#syntax-and-structure). Load other sections, guides or Skills only for the affected mechanism using the routing table below; each document owns its specialized requirements.
 
+## Subagents
+
+Apply the [official subagent guidance](https://learn.chatgpt.com/docs/agent-configuration/subagents?surface=ide) as follows:
+
+- Use subagents when a substantial task has independent, bounded parts that benefit from parallel work. Handle small or tightly coupled changes with one agent; delegation adds token and coordination costs.
+- Prefer delegation for code exploration, documentation research, log analysis and focused reviews. Keep requirements, architectural decisions and integration with the main agent.
+- Give each subagent a clear objective, relevant context, owned files or scope, permission to edit or a read-only constraint, allowed checks and expected output. Request concise findings with file references, risks and verification results rather than raw logs.
+- Parallel edits require non-overlapping file ownership and agreed shared contracts. Handle shared files, generated outputs and dependent changes sequentially; do not overwrite another agent's or the user's work.
+- Keep inherited model and reasoning settings unless the user or applicable instructions explicitly select another supported configuration.
+- Every subagent must follow this file, relevant routed guides, Skills and session permissions. Delegation does not relax the [verification](#verification) or [safety](#safety--boundaries) rules, including the test-command restriction.
+- Continue independent work while subagents run; wait for required results before integration and the final response. The main agent reviews their findings and combined diff, resolves conflicts, completes applicable checks and reports remaining limitations.
+
 ## Verification
 
 - Safe targeted checks for the affected area may run without separate confirmation. Tests may be run only by the user; do not invoke test commands, including through scripts or hooks.
@@ -40,7 +52,9 @@ The affected contracts and routed requirements are satisfied, applicable verific
 
 | Task | Read/use |
 |---|---|
+| Read-only investigation, current-state audit or evidence for planning | [flutter-change-discovery](.agents/skills/flutter-change-discovery/SKILL.md) |
 | Add/change a feature across layers | [flutter-feature-change](.agents/skills/flutter-feature-change/SKILL.md) |
+| Split/move files or refactor existing code while preserving behavior | [flutter-behavior-preserving-refactor](.agents/skills/flutter-behavior-preserving-refactor/SKILL.md) |
 | DI, module boundaries, routing or platform services | [Architecture](docs/architecture/overview.md) |
 | API, DTO, mapper, repository or persistence | [Data access](docs/development/data-access.md) |
 | Controller, state, retry or filters | [Controllers](docs/development/controllers.md) |

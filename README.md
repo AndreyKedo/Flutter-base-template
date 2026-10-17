@@ -8,7 +8,7 @@ Flexible base flutter application project structure.
 - [Architecture](docs/architecture/overview.md) — template structure, initialization, DI and navigation.
 - [Dart conventions](docs/DEVELOPMENT.md) — syntax, value semantics and collection ownership.
 - [Data access](docs/development/data-access.md), [controllers](docs/development/controllers.md), [UI](docs/development/ui.md), [localization](docs/development/localization.md), and [testing](docs/development/testing.md) — guidance for the affected mechanism.
-- [Feature changes](.agents/skills/flutter-feature-change/SKILL.md) and [localized messages](.agents/skills/flutter-localization/SKILL.md) — local AI workflows.
+- [Read-only discovery](.agents/skills/flutter-change-discovery/SKILL.md), [feature changes](.agents/skills/flutter-feature-change/SKILL.md), [behavior-preserving refactoring](.agents/skills/flutter-behavior-preserving-refactor/SKILL.md), and [localized messages](.agents/skills/flutter-localization/SKILL.md) — local AI workflows.
 
 Guides distinguish requirements for new work from the current scaffold. Commands run from the repository root unless stated otherwise; Markdown links are relative to their containing file.
 
