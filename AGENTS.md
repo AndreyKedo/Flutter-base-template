@@ -20,6 +20,10 @@ Reusable Flutter application scaffold. Shared infrastructure is in `lib/core/`, 
 
 Before changing Dart, read [syntax and structure](docs/DEVELOPMENT.md#syntax-and-structure). Load other sections, guides or Skills only for the affected mechanism using the routing table below; each document owns its specialized requirements.
 
+## Dart and Flutter plugin
+
+Use applicable **Dart and Flutter** skills for standard SDK/framework procedures; keep local guidance focused on project contracts and integration. Resolve skills by name from the active catalog, without machine-specific paths. If unavailable, follow [API verification](docs/DEVELOPMENT.md#verifying-unfamiliar-sdksapis). Plugin examples must respect this project's architecture, SDK, analyzer settings and verification restrictions; they do not authorize library/DI replacement, dependency installation, test runs or out-of-scope fixes.
+
 ## Subagents
 
 Apply the [official subagent guidance](https://learn.chatgpt.com/docs/agent-configuration/subagents?surface=ide) as follows:

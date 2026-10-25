@@ -7,6 +7,8 @@ description: Implement a new feature or a coordinated behavior change across dom
 
 Input: requested behavior, target feature and any supplied data contract. Output: a coherent feature change with affected contracts and evidence of verification.
 
+Use `dart-flutter:flutter-apply-architecture-best-practices` for general layer roles under the [plugin rules](../../../AGENTS.md#dart-and-flutter-plugin). This workflow owns integration with the scaffold's feature folders, `control` and existing DI.
+
 ## Workflow
 
 1. Read the current `git status` and relevant diff, then inspect the affected implementation and its callers. Identify existing work to preserve, the feature owner and the observable behavior requested. If prior investigation exists, verify its source references against the current checkout; use [flutter-change-discovery](../flutter-change-discovery/SKILL.md) when the task first requires evidence for planning rather than implementation.
@@ -16,7 +18,7 @@ Input: requested behavior, target feature and any supplied data contract. Output
    - State transitions, retry or filtering: [controllers](../../../docs/development/controllers.md).
    - Rendering or forms: [UI](../../../docs/development/ui.md).
    - Messages or locale-aware formatting: [localization](../../../docs/development/localization.md). For ARB or generated API changes, follow [flutter-localization](../flutter-localization/SKILL.md).
-4. Work through the needed data/state layers to their consumers, wiring the actual DI lifetime and navigation. Check initial, loaded and failure behavior at the changed boundary, plus repeated operations or concurrency where affected. Do not add missing scaffold services merely because a guide describes their intended conventions.
+4. Bind the changed contracts to the scaffold's actual DI lifetime and navigation. Check initial, loaded and failure behavior at the changed boundary, plus repeated operations or concurrency where affected. Do not add missing scaffold services merely because a guide describes their intended conventions.
 5. Review the full changed dependency graph, including new files, imports/exports, route entry points, generated consumers and relevant documentation. Search for obsolete references when replacing a symbol or contract. Select regression cases using the [testing guide](../../../docs/development/testing.md) and perform applicable [project verification](../../../AGENTS.md#verification). Recommend behavioral tests for the user to run; do not invoke them.
 6. Report the resulting behavior, affected contracts and checks actually performed. Distinguish static verification from observed runtime behavior, and state remaining unknowns or failures. Review the task diff separately from existing work.
 

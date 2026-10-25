@@ -7,7 +7,7 @@ Read when changing visible messages, their parameters, translations or locale-aw
 ### Localization contract
 
 - Obtain visible strings, hints, validation messages, statuses and plurals through `context.lcl` from the [BuildContext extensions](../../lib/core/build_context_ext.dart).
-- Pass message values through placeholders; express a finite set of variants of one message through ICU `select`, and quantities through `plural`/`selectordinal`. Keep variants of one semantic message in a single parameterized key.
+- Keep variants of one semantic message in a single parameterized key; use `selectordinal` when quantities require ordinal forms.
 - Use locale-aware number/date formatting. Dates have [IntlHelperContextWrapper](../../lib/core/localizations/intl_wrapper.dart), and message parameters have ARB metadata. When changing formatting, verify the specific helper's behavior for the required locale.
 - Do not automatically translate user-provided names or unknown server values. The meaning of the specific message determines the fallback for an unknown value.
 - Keep keys, parameters and meaning consistent across all supported locale sources; an ARB file's name does not establish the quality of its translations.
@@ -19,7 +19,7 @@ Read when changing visible messages, their parameters, translations or locale-aw
 - [ApplicationLocalizationWrapper](../../lib/core/localizations/localization_wrapper.dart) provides messages and compatible Material delegates. Create the wrapper only with a context whose tree already provides `AppLocalizations`.
 - [ApplicationWidget](../../lib/feature/application/widget/application.dart) connects the localization delegates and supported locales to `MaterialApp`.
 
-This guide owns message and formatting requirements. Follow [flutter-localization](../../.agents/skills/flutter-localization/SKILL.md) for ARB changes, generator execution, and verification of the generated API and its consumers.
+This guide owns message policy and wrappers. Follow [flutter-localization](../../.agents/skills/flutter-localization/SKILL.md) for project integration and verification; it delegates standard ARB/ICU mechanics to `dart-flutter:flutter-setup-localization`.
 
 ## Current template state / exceptions
 

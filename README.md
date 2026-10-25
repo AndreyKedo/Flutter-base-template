@@ -12,6 +12,8 @@ Flexible base flutter application project structure.
 
 Guides distinguish requirements for new work from the current scaffold. Commands run from the repository root unless stated otherwise; Markdown links are relative to their containing file.
 
+Standard Dart/Flutter procedures come from the **Dart and Flutter** plugin when available. Local guidance defines the template-specific contracts and integration rules; see [plugin usage](AGENTS.md#dart-and-flutter-plugin).
+
 ### How run
 
 1. Clone this repository via `git clone`.

@@ -2,6 +2,8 @@
 
 Read when adding/changing tests or selecting checks for affected behavior. Commands and execution restrictions belong to [AGENTS.md](../../AGENTS.md#verification): only the user runs tests. Selecting scenarios and writing tests do not authorize the agent to run them.
 
+Standard test authoring and file organization are covered by `dart-flutter:dart-add-unit-test` and `dart-flutter:flutter-add-widget-test`; apply the [plugin rules](../../AGENTS.md#dart-and-flutter-plugin). This guide owns test selection and the project-specific harness.
+
 ## Normative requirements
 
 - The purpose of testing is to find scenarios where substantive application logic can behave incorrectly and prevent identified defects from recurring. Before adding a test, identify the specific scenario, possible error and observable result. Look for these in user actions, boundary values, state transitions, asynchronous operation ordering and local data handling. The existence of a class or method, test counts and coverage percentages do not by themselves justify a new test.
@@ -32,7 +34,7 @@ The table lists options for checking changed behavior, not already implemented m
 
 ### Async and widget harness
 
-Paths under `test/` usually mirror those under `lib/`. For an asynchronous scenario, control operation completion through a fake/`Completer` to check the pending state and the subsequent event separately. In widget tests, use `pump` for debounce intervals; complete the lifecycle of created controllers/clients through teardown. Data must be synthetic.
+For controller/concurrency scenarios, control operation completion through a fake/`Completer` to check the pending state and the subsequent event separately. Advance debounce intervals explicitly with `pump`; waiting for animations to settle does not establish the intermediate state. Data must be synthetic.
 
 Build a localized harness on `MaterialApp` from `material_ui` with `AppLocalizations.supportedLocales`, `AppLocalizations.delegate` and `GlobalMaterialLocalizations.delegates` from `material_ui`. The [generated API](../../lib/core/localizations/app_localizations.dart) and [wrapper](../../lib/core/localizations/localization_wrapper.dart) define the current names and delegates. Access `context.lcl` from a descendant context under the localized tree, not while creating the root `MaterialApp`. For controllers/DI, provide only the dependencies needed by the behavior being checked.
 
