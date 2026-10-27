@@ -15,6 +15,14 @@ Input: question, symptom or proposed behavior and a read-only scope. Output: sou
 4. Classify findings as confirmed by current source, observed at runtime, inferred, or unresolved. Keep supplied API documentation, DTO expectations and actual response evidence distinct when relevant. Attach file/line references to material findings and identify missing evidence without guessing.
 5. Present the current behavior, likely change surface, dependencies and bounded alternatives. State any product or contract decisions required and suitable verification scenarios. An earlier plan or a source-based audit is not proof that a change is implemented or works at runtime.
 
-## Boundaries
+## Parallel investigation
 
-Keep the investigation read-only: do not edit files, install packages, generate outputs, run formatters, tests or commands that mutate project/tool state. A proposed next step is not authorization to implement it or contact a live API. Read-only diagnostic tools may be used within the requested scope; distinguish their actual results from recommendations.
+Apply the [root trigger and role settings](../../../AGENTS.md#parallel-investigation) and [native delegation mechanism](../../../AGENTS.md#delegation-mechanism) before tracing independent paths. Assign each explorer one question, bounded paths, relevant constraints and an expected evidence summary. For example, one traces data and state transitions while another traces UI consumers and navigation; both use the current checkout and preserve the read-only boundary below.
+
+Require file/symbol references, discovered contracts and dependencies, and a distinction between confirmed facts, inference and missing evidence. The main agent continues non-overlapping investigation, waits for all required findings, resolves disagreements against source and combines the results into one change map. Do not independently repeat the same broad scan or treat an explorer's summary as runtime verification. Explorers do not spawn further agents.
+
+## Output and boundaries
+
+Return findings in the current task by default. If the user requests a saved report, follow [documentation and task artifacts](../../../AGENTS.md#documentation-and-task-artifacts): use `build/agent-artifacts/<task-id>/` unless the user specifies another location. This authorizes only the requested report, not changes to source, configuration or maintained documentation. An explorer assigned a strictly read-only scope returns content to its parent for saving.
+
+Keep the investigation read-only apart from that requested report: do not edit project files, install packages, generate code, run formatters, tests or commands that mutate project/tool state. A proposed next step is not authorization to implement it or contact a live API. Read-only diagnostic tools may be used within the requested scope; distinguish their actual results from recommendations.

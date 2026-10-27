@@ -1,0 +1,9 @@
+{
+  "description": "Prevent known agent test launches and require current verification before completion.",
+  "hooks": {
+    "SessionStart": [{"hooks": [{"type": "command", "command": "dart \"$(git rev-parse --show-toplevel)/.codex/hooks/agent_hooks.dart\"", "timeout": 30}]}],
+    "PreToolUse": [{"hooks": [{"type": "command", "command": "dart \"$(git rev-parse --show-toplevel)/.codex/hooks/agent_hooks.dart\"", "timeout": 30}]}],
+    "PostToolUse": [{"hooks": [{"type": "command", "command": "dart \"$(git rev-parse --show-toplevel)/.codex/hooks/agent_hooks.dart\"", "timeout": 30}]}],
+    "Stop": [{"hooks": [{"type": "command", "command": "dart \"$(git rev-parse --show-toplevel)/.codex/hooks/agent_hooks.dart\"", "timeout": 30}]}]
+  }
+}

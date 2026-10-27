@@ -49,3 +49,6 @@ app.*.map.json
 
 #Artifacts
 /artifacts/
+
+# Local Codex hook observations and verification receipts
+/.codex/.hook-state/

@@ -41,6 +41,8 @@ The examples demonstrate these specific mechanisms; they are not reference imple
 
 ## Current template state / exceptions
 
+Standalone scripts in `.codex/hooks/` depend only on Dart SDK libraries and Git so they can run without application package resolution. They may use `trim().isEmpty` for blank checks instead of importing application extensions.
+
 Existing infrastructure and UI code includes deep chains and methods without comments before each stage. This does not override requirements for code being changed and does not justify broad incidental refactoring. The template does not provide a complete application example demonstrating every collection ownership rule.
 
 ## Completion criteria

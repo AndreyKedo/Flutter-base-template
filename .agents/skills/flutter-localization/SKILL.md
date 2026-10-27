@@ -10,8 +10,9 @@ Use `dart-flutter:flutter-setup-localization` for ARB/ICU mechanics under the [p
 ## Project integration
 
 1. Apply the [message contract](../../../docs/development/localization.md#localization-contract) to the message and callers. [l10n.yaml](../../../l10n.yaml) owns paths and the untranslated-message report; preserve its output and `context.lcl` / `material_ui` integration. Account for existing source and generated changes.
-2. After the ARB change, run `flutter gen-l10n` from the repository root, without substituting dependency installation. Handwritten localization and intl wrappers in the output directory remain source files. Resolve generation failures in ARB/configuration within scope; do not patch generated Dart.
+2. Keep ARB integration and generation under one owner's control. After the ARB change, run `flutter gen-l10n` from the repository root, without substituting dependency installation. Handwritten localization and intl wrappers in the output directory remain source files. Resolve generation failures in ARB/configuration within scope; do not patch generated Dart.
 3. Update callers to the changed generated signatures, check cross-locale key/parameter parity and actual message language, and review the untranslated-message report when produced. Review source, generated code and callers together. Apply [project verification](../../../AGENTS.md#verification); recommend relevant [locale/variant scenarios](../../../docs/development/testing.md) for the user to run.
+4. Apply [mandatory independent review](../../../AGENTS.md#mandatory-independent-review) when message behavior, parameters or generated APIs change. Give the reviewer the intended meaning and the combined ARB/generated/caller diff after integration. The reviewer checks parity and consumers without running generation or tests; report its outcome and remaining limitations. An equivalent spelling-only correction follows the root exception.
 
 ## Stop conditions
 

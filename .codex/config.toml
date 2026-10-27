@@ -1,0 +1,8 @@
+# Loaded by Codex only for trusted projects. See README.md#codex-setup.
+# https://learn.chatgpt.com/docs/config-file/config-reference
+[marketplaces.dart-flutter]
+source_type = "git"
+source = "https://github.com/flutter/agent-plugins.git"
+
+[plugins."dart-flutter@dart-flutter"]
+enabled = true
