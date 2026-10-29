@@ -31,8 +31,6 @@ codex plugin add dart-flutter@dart-flutter
 
 These commands register/install the plugin in the user's Codex environment; the repository configuration controls its use for this project. Verify installation with `codex plugin list --marketplace dart-flutter --json` from the repository root: the plugin should be both installed and enabled. Start a new Codex session in the repository if its skills/tools are not yet visible. The project's prohibition on agent-run tests also applies to plugin skills and MCP tools.
 
-The repository also includes [Codex hooks](.codex/hooks.json) for known forbidden test launches and current verification before completion. After trusting the project, open `/hooks` in the Codex CLI and review/trust the hook definitions; changed definitions require renewed trust. These hooks use `dart` and `git` on `PATH` with a POSIX shell (macOS/Linux). See [agent hooks](docs/development/agent-hooks.md) for the verifier command, coverage, state storage and limitations. Installation alone does not establish that hooks are active in an existing session.
-
 ### How run
 
 1. Clone this repository via `git clone`.

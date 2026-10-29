@@ -26,7 +26,7 @@ Before changing Dart, read [syntax and structure](docs/DEVELOPMENT.md#syntax-and
 - Update the relevant thematic guide when its documented mechanism or practice changes. Add a document only for reusable project knowledge that has no suitable existing home. An investigation may supply verified facts for a guide; distill those facts into the guide rather than copying the investigation or presenting a proposed mechanism as implemented.
 - Keep task plans, hypotheses, research notes, audit/review reports, check logs, diagnostic screenshots and other temporary agent output out of `docs/`. Return concise findings in the current task by default; native subagents return them to their parent. When files are needed, save them under `build/agent-artifacts/<task-id>/`, creating a separate task directory only as needed, unless the user explicitly requests another location.
 - `build/agent-artifacts/` is Git-ignored and disposable: cleaning build output can remove it. Do not commit these files or make maintained documentation, application code or configuration depend on them. Keep durable technical conclusions self-contained in the appropriate guide. Do not delete or overwrite another task's artifacts.
-- This routing applies to temporary agent work. Source files, generated project outputs and tool-managed state keep their prescribed locations, including verification receipts under `.codex/.hook-state/`; do not move or fabricate those records.
+- This routing applies to temporary agent work. Source files, generated project outputs and tool-managed state keep their prescribed locations, without relocating them as temporary agent output.
 
 ## Dart and Flutter plugin
 
@@ -74,16 +74,14 @@ When a substantial investigation has at least two independent evidence paths, la
 - After integration and applicable checks, start a fresh `template_reviewer` that did not author the implementation or its plan, using the [delegation mechanism](#delegation-mechanism). Provide the original request, acceptance criteria, relevant guides, the comparison baseline, the complete task diff including new files, and check results. Identify unrelated user changes. Supply evidence rather than the author's conclusion that the change is correct.
 - The reviewer inspects the final source and affected callers without editing, running tests, formatting, generating code or delegating further. It returns findings ordered by severity with file/line references and observable consequences, plus the reviewed scope and remaining uncertainties; an empty finding list is explicit. Source review and static checks do not establish runtime behavior.
 - The main agent assesses findings, fixes confirmed issues and obtains a follow-up review of affected changes and interactions. Complete the review only when the final version has been reviewed and no material finding remains unresolved; identify pre-existing or out-of-scope issues separately. A reviewer/tool failure or unavailable delegation leaves review incomplete, not implicitly passed. Report the blocker and completed work; self-review cannot substitute for the required independent pass.
-- Report review status, performed checks and unverified behavior in the final handoff. This requirement never authorizes tests, including tests invoked indirectly through scripts or hooks.
+- Report review status, performed checks and unverified behavior in the final handoff. This requirement never authorizes tests, including tests invoked indirectly through other tools or scripts.
 
 ## Verification
 
-- Safe targeted checks for the affected area may run without separate confirmation. Tests may be run only by the user; do not invoke test commands, including through scripts or hooks.
+- Safe targeted checks for the affected area may run without separate confirmation. Tests may be run only by the user; do not invoke test commands, including indirectly through other tools or scripts.
 - For changed Dart: `dart format <changed-files>`, then `flutter analyze` or `dart analyze`. Recommend relevant behavioral tests from [testing guidance](docs/development/testing.md) for the user to run.
 - For Markdown/Skills only: check local links, source references, consistency and Skill frontmatter/triggers; no Flutter tests or code generation.
 - Review the task diff and run `git diff --check -- <changed-paths>`. Do not weaken checks to obtain a passing result; report unrelated failures separately.
-- Record the automated checks with `dart .codex/hooks/verify.dart -- <explicit repository-relative task files>` from the repository root before completing edits. Include new and deleted task paths. This runner formats only the supplied existing Dart files, analyzes affected Dart, validates local inline Markdown links/required Skill metadata and JSON, and checks diff whitespace. It never runs tests or generators. It does not replace source review, other applicable checks, or independent review.
-- [Repository hooks](docs/development/agent-hooks.md) reject known test launches and detect missing/stale verification receipts. Rerun the verifier after further edits. Choose task-owned files explicitly; never expand scope to concurrent user edits just to satisfy the gate. If hooks/checks fail or remain unavailable, state that verification is incomplete and identify the blocker. Do not bypass trust, disable hooks or manufacture a receipt to claim completion.
 
 ## Safety / boundaries
 
@@ -108,4 +106,3 @@ The affected contracts and routed requirements are satisfied, applicable verific
 | Localized text, ICU parameters or number/date formatting | [Localization](docs/development/localization.md) |
 | Add/change ARB messages or their generated API | [flutter-localization](.agents/skills/flutter-localization/SKILL.md) |
 | Tests, fakes or widget harnesses | [Testing](docs/development/testing.md) |
-| Agent hooks, verification receipts or blocked completion | [Agent hooks](docs/development/agent-hooks.md) |
